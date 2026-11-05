@@ -1,0 +1,1081 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NIRA — Guía del MVP</title>
+<style>
+:root{--y:#F5C518;--n:#0E2A3F;--t:#7FD1C3;--bg:#F7F8FA;--card:#fff;--tx:#1a1a1a;--mu:#5b6570;--bd:#d7dce2;--in:#fff;--ok:#1f8a4c;--rev:#c27c00;--prog:#2a6fdb;}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1720;--card:#16212c;--tx:#e8edf2;--mu:#9aa7b4;--bd:#2c3a48;--in:#0f1a24;--n:#9cc8ff;}}
+:root[data-theme="dark"]{--bg:#0f1720;--card:#16212c;--tx:#e8edf2;--mu:#9aa7b4;--bd:#2c3a48;--in:#0f1a24;--n:#9cc8ff;}
+*{box-sizing:border-box}
+body{margin:0;font-family:Calibri,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--tx);font-size:15px;line-height:1.45}
+.top{position:sticky;top:0;z-index:5;background:#0E2A3F;color:#fff;padding:10px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;border-bottom:4px solid var(--y)}
+.brand{font-weight:700;font-size:18px;letter-spacing:.3px}.brand span{color:var(--y)}
+.gprog{flex:1;min-width:180px}.bar{height:8px;background:rgba(255,255,255,.2);border-radius:6px;overflow:hidden}.bar i{display:block;height:100%;background:var(--y);width:0;transition:width .3s}
+#gtext{font-size:12px;opacity:.9}
+.topbtns{display:flex;gap:6px;flex-wrap:wrap}
+.btn{background:var(--y);color:#1a1a1a;border:0;border-radius:8px;padding:9px 14px;font:inherit;font-weight:700;cursor:pointer;min-height:40px}
+.btn:hover{filter:brightness(.95)}.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.ghost{background:transparent;color:inherit;border:1px solid currentColor;font-weight:600}
+.top .btn.ghost{color:#fff}
+.btn.small{padding:6px 10px;min-height:34px;font-size:13px}
+.icon{background:transparent;border:1px solid var(--bd);color:var(--mu);border-radius:6px;width:32px;height:32px;cursor:pointer}
+.icon:hover{color:#b00020;border-color:#b00020}
+:focus-visible{outline:3px solid #2a6fdb;outline-offset:2px}
+.layout{display:grid;grid-template-columns:290px 1fr;gap:0;max-width:1500px;margin:0 auto}
+aside{border-right:1px solid var(--bd);padding:12px 8px;position:sticky;top:64px;height:calc(100vh - 64px);overflow:auto}
+#nav{list-style:none;margin:0;padding:0}
+#nav button{display:flex;align-items:center;gap:8px;width:100%;text-align:left;background:none;border:0;color:var(--tx);padding:7px 8px;border-radius:8px;cursor:pointer;font:inherit;font-size:14px}
+#nav button:hover{background:rgba(127,209,195,.18)}#nav button.cur{background:rgba(245,197,24,.28);font-weight:700}
+.nn{min-width:20px;color:var(--mu);font-size:12px}.nt{flex:1}.np{font-size:11px;color:var(--mu);margin-left:auto}
+.dot{width:10px;height:10px;border-radius:50%;border:2px solid var(--mu);flex:none}
+.dot.prog{background:var(--prog);border-color:var(--prog)}.dot.rev{background:var(--rev);border-color:var(--rev)}.dot.ok{background:var(--ok);border-color:var(--ok)}
+.legend{font-size:12px;color:var(--mu);padding:10px 8px;display:flex;flex-wrap:wrap;gap:8px}.legend span{display:inline-flex;gap:4px;align-items:center}
+#navsel{display:none;width:100%;margin:10px 0;padding:10px;font:inherit;border-radius:8px;border:1px solid var(--bd);background:var(--in);color:var(--tx)}
+main{padding:20px 28px 60px;min-width:0}
+.kicker{margin:0;color:var(--mu);font-size:13px;text-transform:uppercase;letter-spacing:.6px}
+h2{margin:2px 0 10px;font-size:26px;color:var(--n)}h2:focus{outline:none}
+h3{color:var(--n);font-size:17px;margin:0}
+.guide{background:var(--card);border-left:5px solid var(--y);padding:10px 14px;border-radius:6px;margin-bottom:12px}
+.muted{color:var(--mu);font-size:13px}
+.statusrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+.statusrow select{width:auto;min-width:180px;padding:6px 8px;border-radius:6px;border:1px solid var(--bd);background:var(--in);color:var(--tx);font:inherit}
+.pill{background:var(--t);color:#0E2A3F;padding:3px 10px;border-radius:20px;font-size:13px;font-weight:700}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px 18px;margin-bottom:16px}
+.field{display:flex;flex-direction:column;gap:4px;margin-bottom:6px}.field label{font-weight:700;font-size:14px}
+input[type=text],input[type=date],textarea,select{font:inherit;color:var(--tx);background:var(--in);border:1px solid var(--bd);border-radius:6px;padding:8px 9px;width:100%}
+textarea{resize:vertical;min-height:42px}
+table.edit td textarea{overflow:hidden;min-height:34px}
+.tblock{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:12px;margin:14px 0}
+.thead{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:8px}
+.tscroll{overflow-x:auto;margin-bottom:8px}
+table.edit{border-collapse:collapse;width:100%;table-layout:fixed}
+table.edit th{background:#0E2A3F;color:#fff;text-align:left;font-size:13px;padding:7px;position:sticky;top:0}
+table.edit td{border-bottom:1px solid var(--bd);padding:4px;vertical-align:top}
+table.edit td input,table.edit td textarea,table.edit td select{font-size:13px;padding:6px;border-color:transparent;background:transparent}
+table.edit td input:focus,table.edit td textarea:focus,table.edit td select:focus{border-color:var(--bd);background:var(--in)}
+table.edit tr:hover td{background:rgba(127,209,195,.08)}
+.check{border:1px solid var(--bd);border-radius:10px;padding:10px 14px;margin:14px 0;background:var(--card)}
+.check legend{font-weight:700;color:var(--n);padding:0 6px}
+.ci{display:grid;grid-template-columns:1fr 260px;gap:8px;align-items:center;padding:4px 0;border-bottom:1px dashed var(--bd)}
+.ci label{display:flex;gap:8px;align-items:flex-start;cursor:pointer}.ci input[type=checkbox]{width:20px;height:20px;margin-top:1px;flex:none}
+.nota{font-size:13px!important;padding:5px 7px!important}
+.tool{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.pager{display:flex;justify-content:space-between;margin-top:24px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:10px 0 18px}
+.kpis div{background:var(--card);border:1px solid var(--bd);border-top:4px solid var(--y);border-radius:8px;padding:12px}.kpis b{display:block;font-size:26px;color:var(--n)}.kpis span{color:var(--mu);font-size:13px}
+.exportbox{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px;margin-bottom:18px}.exportbox .btns{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.audit details{background:var(--card);border:1px solid var(--bd);border-radius:8px;margin:6px 0;padding:8px 12px}
+.audit summary{cursor:pointer;display:flex;gap:8px;align-items:center}
+.audit ul{margin:8px 0;padding-left:20px;font-size:14px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+#report{display:none}
+@media (max-width:900px){.layout{grid-template-columns:1fr}aside{position:static;height:auto;border:0;padding:0 16px}#nav,.legend{display:none}#navsel{display:block}main{padding:12px 16px 50px}.ci{grid-template-columns:1fr}.top{position:static}}
+@media print{
+  @page{size:A4 landscape;margin:12mm}
+  body{background:#fff;color:#1a1a1a;font-size:10.5pt}
+  .top,.layout{display:none!important}#report{display:block}
+  #report h1{font-size:20pt;color:#0E2A3F;margin:0}#report .rsub{color:#555;margin:2px 0 10px}
+  #report h2{background:#F5C518;padding:5px 8px;font-size:13pt;margin:16px 0 4px;break-after:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #report h3{font-size:11pt;color:#0E2A3F;margin:10px 0 4px;break-after:avoid}
+  #report .rmeta{font-style:italic;color:#555;font-size:9pt;margin:0 0 6px}
+  #report .rf{margin:4px 0 8px;break-inside:avoid}#report .rf b{display:block}
+  #report table{border-collapse:collapse;width:100%;font-size:8.5pt;margin-bottom:8px}
+  #report th{background:#0E2A3F;color:#fff;text-align:left;padding:4px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #report td{border:1px solid #ccc;padding:4px;vertical-align:top}#report tr{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand">NIRA <span>·</span> Guía del MVP</div>
+  <div class="gprog"><div class="bar" role="progressbar" aria-label="Avance general"><i id="gbar"></i></div><div id="gtext"></div></div>
+  <div class="topbtns">
+    <button type="button" class="btn small" data-exp="xlsx">Excel</button>
+    <button type="button" class="btn small" data-exp="docx">Word</button>
+    <button type="button" class="btn small" data-exp="pdf">PDF</button>
+    <button type="button" class="btn ghost small" data-exp="json" title="Descargar respaldo para continuar en otra computadora">Respaldo</button>
+    <button type="button" class="btn ghost small" id="btnImport" title="Cargar un respaldo .json">Importar</button>
+    <button type="button" class="btn ghost small" id="btnReset" title="Volver al borrador inicial">Reiniciar</button>
+    <input type="file" id="importFile" accept="application/json,.json" hidden>
+  </div>
+</header>
+<div class="layout">
+  <aside>
+    <label class="sr" for="navsel">Ir al paso</label><select id="navsel"></select>
+    <ol id="nav"></ol>
+    <div class="legend"><span><i class="dot"></i>Pendiente</span><span><i class="dot prog"></i>En progreso</span><span><i class="dot rev"></i>En revisión</span><span><i class="dot ok"></i>Validado</span></div>
+    <p class="muted" id="saved" style="padding:0 8px" role="status" aria-live="polite"></p>
+  </aside>
+  <main id="main"></main>
+</div>
+<div id="report"></div>
+<script>
+/* ====== CONTENIDO DE LA GUÍA (editable) ====== */
+const PRIO = ["Must — imprescindible", "Should — importante", "Could — deseable", "Won't — fuera del MVP"];
+const ROLES = ["Todos", "PM / BA", "UX/UI", "Frontend", "Backend", "QA", "Data", "Diseño gráfico", "Legal / GRC"];
+const EST_BACK = ["Propuesto — pendiente de validación", "To Do", "En progreso", "En revisión", "Hecho", "Bloqueado"];
+const EST_SIMPLE = ["Pendiente", "En progreso", "En revisión", "Validado", "Descartado"];
+const SINO = ["Sí", "Parcial", "No", "A definir"];
+const NIVEL = ["Alta", "Media", "Baja"];
+
+const SECTIONS = [
+/* 0 ------------------------------------------------------------ */
+{ id: "inicio", n: "0", title: "Datos del proyecto",
+  guide: "Completá los datos generales. La fecha de inicio se usa para calcular las fechas del backlog (Semana 0 = semana de inicio).",
+  roles: "PM / BA",
+  fields: [
+    { id: "proyecto", label: "Nombre del proyecto", def: "NIRA: Talento y Futuro" },
+    { id: "version", label: "Versión del documento", def: "v0.1 — Borrador para revisión del equipo" },
+    { id: "fechaInicio", label: "Fecha de inicio (Semana 0)", type: "date" },
+    { id: "fechaEntrega", label: "Fecha objetivo de entrega final", type: "date" },
+    { id: "semanas", label: "Duración", def: "Sprint Planning (Semana 0) + 8 semanas (4 sprints de 2 semanas)" },
+    { id: "responsable", label: "Responsable del documento / PM", ph: "Nombre y rol" },
+    { id: "equipo", label: "Equipo y roles", type: "area", ph: "Una persona por línea: Nombre — Rol — Disponibilidad (h/semana)" },
+    { id: "stakeholders", label: "Stakeholders / cliente", type: "area", ph: "Organización, contacto, qué espera del MVP" },
+    { id: "enlaces", label: "Enlaces de trabajo", type: "area", ph: "Repositorio GitHub:\nFigma:\nJira / Trello:\nDrive / documentación:\nDeploy (front / back):" },
+  ],
+  tables: [
+    { id: "fuentes", label: "Fuentes utilizadas", cols: [
+      { k: "fuente", label: "Fuente", w: 30 }, { k: "uso", label: "Para qué se usó", type: "area", w: 50 }, { k: "estado", label: "Estado", type: "select", options: EST_SIMPLE, w: 20 } ],
+      rows: [
+        { fuente: "Video «NIRA: Talento y Futuro» (5:48 min)", uso: "Visión, 6 pilares, recorrido del usuario, privacidad, habilidades, competencias e insignias. Base de la trazabilidad (paso 1).", estado: "En revisión" },
+        { fuente: "Documento «Calculadora Inteligente» (Innova Lab)", uso: "Estructura del documento de producto: identificación, problemática, solución, funcionalidades, requisitos mínimos, future scope, tecnologías y plan semanal por rol.", estado: "Validado" },
+        { fuente: "Backlog y cronograma UrbanFix (Talently Lab)", uso: "Formato de backlog por semana y rol, cronograma con hitos y checkpoints, notas de validación.", estado: "Validado" },
+        { fuente: "Plantilla de Proyecto (HTML)", uso: "Campos base y paleta de colores del documento.", estado: "Validado" },
+      ] } ],
+},
+/* 1 ------------------------------------------------------------ */
+{ id: "vision", n: "1", title: "Visión y trazabilidad con el video",
+  guide: "Cada elemento del video tiene que terminar en al menos un módulo y un requisito del MVP. Si algo queda en «No», el MVP no cumple lo que muestra el video o hay que justificar por qué queda fuera.",
+  roles: "PM / BA · UX/UI",
+  fields: [
+    { id: "pregunta", label: "Pregunta disparadora", def: "¿Y si el futuro no tuviera que esperar en una fila?" },
+    { id: "mision", label: "Misión", type: "area", def: "Acercar herramientas y conocimientos a todos para que la tecnología genere confianza sin dejar a nadie atrás." },
+    { id: "lema", label: "Lema de cierre", def: "La tecnología conecta. El talento transforma. Cada habilidad abre un camino." },
+    { id: "pitch", label: "Pitch en una frase (para la demo)", type: "area", ph: "Ej.: NIRA reemplaza las filas y los CV impresos por una identidad digital con QR, capacitación y evaluación gamificada que termina en insignias verificables y oportunidades reales de empleo." },
+  ],
+  tables: [
+    { id: "traza", label: "Trazabilidad video → MVP", cols: [
+      { k: "elem", label: "Elemento del video", w: 22 }, { k: "mensaje", label: "Qué dice / muestra", type: "area", w: 30 },
+      { k: "modulo", label: "Módulo del MVP", w: 18 }, { k: "rf", label: "RF asociados", w: 12 }, { k: "cub", label: "¿Cubierto?", type: "select", options: SINO, w: 10 } ],
+      rows: [
+        { elem: "1. El fin de las filas", mensaje: "Tiempo y talento perdido: pilas de CV impresos y filas interminables («seiscientas personas para un solo puesto»). Entrada ágil con QR y un currículum vivo y digital.", modulo: "Eventos y acceso QR", rf: "RF-07 a RF-10", cub: "Sí" },
+        { elem: "2. Identidad Digital", mensaje: "El puente hacia el futuro. Acceder a eventos mediante tu identidad digital.", modulo: "Identidad digital / CV vivo", rf: "RF-01 a RF-06", cub: "Sí" },
+        { elem: "Recorrido: Acceder", mensaje: "A eventos mediante tu identidad digital.", modulo: "Eventos y acceso QR", rf: "RF-08, RF-09", cub: "Sí" },
+        { elem: "Recorrido: Descubrir", mensaje: "Reconocer intereses y habilidades.", modulo: "Descubrir (test de intereses)", rf: "RF-11", cub: "Sí" },
+        { elem: "Recorrido: Aprender", mensaje: "Capacitarse con experiencias digitales.", modulo: "Aprender (rutas de capacitación)", rf: "RF-12, RF-13", cub: "Sí" },
+        { elem: "Recorrido: Conectar", mensaje: "Vincular el perfil con el empleo.", modulo: "Acceso al empleo", rf: "RF-20 a RF-23", cub: "Sí" },
+        { elem: "Recorrido: Demostrar", mensaje: "Validar competencias e insignias.", modulo: "Certificación", rf: "RF-17 a RF-19", cub: "Sí" },
+        { elem: "Identidad y Privacidad", mensaje: "Consentimiento informado para todos los datos; acceso controlado; actualizar y corregir datos; autorización específica para compartir el CV; protección especial de datos de menores.", modulo: "Privacidad y consentimiento", rf: "RF-03, RF-05, RF-06, RF-21, RF-24", cub: "Sí" },
+        { elem: "3. Capacitación Inclusiva", mensaje: "Sin dejar a nadie atrás. Acerca herramientas y conocimientos a todos.", modulo: "Aprender + accesibilidad", rf: "RF-12, RNF-03", cub: "Sí" },
+        { elem: "4. Evaluación Gamificada", mensaje: "Descubrir el potencial. Habilidades del juego: adaptabilidad, resolución de problemas, trabajo en equipo, IA generativa, análisis de datos, gestión de proyectos.", modulo: "Misiones y evidencias", rf: "RF-14 a RF-16", cub: "Sí" },
+        { elem: "Competencia → Evidencia → Digital Badge", mensaje: "Resolución de problemas → superación de desafío; Trabajo en equipo → misión colaborativa; IA generativa → actividad con IA; Análisis de datos → interpretar un caso; Gestión de proyectos → entrega de misión.", modulo: "Misiones + Certificación", rf: "RF-15, RF-17", cub: "Sí" },
+        { elem: "5. Certificación", mensaje: "Insignias digitales: activo profesional de confianza, contratación, democratizar el acceso al empleo digno.", modulo: "Certificación (insignias verificables)", rf: "RF-17 a RF-19", cub: "Sí" },
+        { elem: "6. Acceso al Empleo", mensaje: "Oportunidades reales.", modulo: "Acceso al empleo (empresas y ofertas)", rf: "RF-20 a RF-23", cub: "Sí" },
+      ] } ],
+},
+/* 2 ------------------------------------------------------------ */
+{ id: "identificacion", n: "2", title: "Identificación del producto",
+  guide: "Misma estructura que el documento de producto de referencia. Escribí en lenguaje simple: lo va a leer el cliente.",
+  roles: "PM / BA",
+  fields: [
+    { id: "nombreProd", label: "Nombre del producto", def: "NIRA: Talento y Futuro" },
+    { id: "tipo", label: "Tipo de solución", type: "area", def: "Plataforma web responsive de identidad digital, capacitación y empleabilidad, con acceso a eventos por QR, evaluación gamificada y certificación con insignias digitales." },
+    { id: "usuarios", label: "Usuarios principales", type: "area", def: "Personas que buscan empleo o desarrollar habilidades (incluye jóvenes y menores con autorización), empresas que buscan talento, y organizaciones que realizan eventos de empleo y capacitación." },
+    { id: "proposito", label: "Propósito", type: "area", def: "Que cada persona tenga un perfil vivo y verificable con sus intereses, aprendizajes y competencias demostradas, y pueda usarlo para acceder a eventos y oportunidades laborales sin filas ni papeles." },
+    { id: "necesidad", label: "Necesidad que aborda", type: "area", def: "Los procesos de empleo masivos siguen basados en CV impresos y filas. El talento que no está en el papel (habilidades blandas, aprendizajes recientes) no se ve, y las empresas no tienen evidencias confiables de competencias." },
+    { id: "funcion", label: "Función principal (recorrido guiado)", type: "area", def: "• Acceder: registrarse y obtener una identidad digital con QR.\n• Descubrir: reconocer intereses y habilidades.\n• Aprender: capacitarse con experiencias digitales.\n• Demostrar: superar misiones y obtener insignias verificables.\n• Conectar: compartir el perfil, con autorización, con empresas y ofertas reales." },
+  ] },
+/* 3 ------------------------------------------------------------ */
+{ id: "problematica", n: "3", title: "Problemática",
+  guide: "Describí el problema con datos o ejemplos concretos. Si tenés cifras del cliente o de eventos reales, agregalas.",
+  roles: "PM / BA · UX/UI",
+  fields: [
+    { id: "problema", label: "Descripción del problema", type: "area", def: "En los eventos y procesos de empleo, cientos de personas esperan en filas con CV impresos para un solo puesto. Se pierde tiempo y talento: el papel no muestra lo que la persona sabe hacer, y quien no tiene experiencia formal queda afuera." },
+    { id: "dolores", label: "Puntos de dolor", type: "area", def: "• Filas largas y pilas de CV impresos en ferias y convocatorias.\n• CV estáticos, desactualizados y sin evidencias verificables.\n• Habilidades blandas y digitales invisibles para el empleador.\n• Brecha de acceso a capacitación en herramientas actuales (IA, datos).\n• Datos personales que circulan sin control (copias impresas, planillas).\n• Las empresas no pueden filtrar ni validar competencias rápidamente." },
+    { id: "evidencia", label: "Evidencia / datos que respaldan el problema", type: "area", ph: "Fuente, cifra, fecha. Ej.: cantidad de asistentes por evento, tiempo de espera promedio, % de CV en papel." },
+  ] },
+/* 4 ------------------------------------------------------------ */
+{ id: "solucion", n: "4", title: "Solución propuesta",
+  guide: "Explicá cómo NIRA resuelve cada punto de dolor y qué la diferencia.",
+  roles: "PM / BA",
+  fields: [
+    { id: "descSol", label: "Descripción de la solución", type: "area", def: "Una plataforma donde la persona crea su identidad digital (perfil + CV vivo) y obtiene un QR personal para entrar a eventos. Dentro de NIRA descubre sus intereses, se capacita, demuestra competencias en misiones gamificadas y recibe insignias digitales verificables. Con su autorización, comparte su perfil con empresas y se postula a oportunidades reales." },
+    { id: "valor", label: "Valor agregado", type: "area", def: "• Para la persona: un activo profesional de confianza que crece con cada logro.\n• Para la empresa: evidencias verificables de competencias, no solo declaraciones.\n• Para el organizador: eventos sin filas, con datos de asistencia y resultados.\n• Privacidad por diseño: la persona decide qué comparte y con quién." },
+    { id: "diferencial", label: "Diferencial frente a alternativas", type: "area", ph: "Comparar con bolsas de empleo, LinkedIn, plataformas de cursos. ¿Qué hace NIRA que ellas no?" },
+  ] },
+/* 5 ------------------------------------------------------------ */
+{ id: "usuarios", n: "5", title: "Perfiles de usuario y recorrido",
+  guide: "Definí quién usa NIRA y qué hace en cada etapa. Cada etapa del recorrido debe tener una pantalla y una métrica.",
+  roles: "UX/UI · PM / BA",
+  tables: [
+    { id: "perfiles", label: "Perfiles de usuario (roles del sistema)", cols: [
+      { k: "perfil", label: "Perfil", w: 16 }, { k: "necesidad", label: "Necesidad", type: "area", w: 26 }, { k: "acciones", label: "Qué hace en NIRA", type: "area", w: 30 }, { k: "consid", label: "Consideraciones", type: "area", w: 28 } ],
+      rows: [
+        { perfil: "Talento (persona usuaria)", necesidad: "Mostrar lo que sabe hacer y acceder a oportunidades sin filas.", acciones: "Se registra, completa perfil y CV vivo, usa su QR, hace el test, se capacita, completa misiones, obtiene insignias, autoriza compartir su CV y se postula.", consid: "Puede tener baja alfabetización digital: lenguaje simple, mobile first, accesibilidad." },
+        { perfil: "Menor de edad", necesidad: "Capacitarse y demostrar habilidades con protección especial.", acciones: "Igual que Talento, con funciones limitadas (sin postulación laboral directa si así se define).", consid: "Consentimiento de madre, padre o tutor; datos mínimos; perfil no visible para empresas por defecto." },
+        { perfil: "Empresa / reclutador", necesidad: "Encontrar talento con evidencias confiables.", acciones: "Crea su cuenta, publica ofertas, ve perfiles que le autorizaron, verifica insignias, gestiona postulaciones.", consid: "Solo accede a datos autorizados; queda registro de cada acceso." },
+        { perfil: "Organizador de eventos / institución", necesidad: "Eventos ágiles y medibles.", acciones: "Crea eventos, escanea QR en la entrada, crea misiones y rutas, revisa evidencias y emite insignias.", consid: "Escaneo rápido y con baja conectividad." },
+        { perfil: "Administrador de plataforma", necesidad: "Controlar la operación y la seguridad.", acciones: "Gestiona usuarios, roles, empresas, catálogo de insignias y solicitudes de privacidad.", consid: "Acceso con mínimo privilegio y auditoría." },
+      ] },
+    { id: "journey", label: "Recorrido del usuario (user journey)", cols: [
+      { k: "etapa", label: "Etapa", w: 12 }, { k: "accion", label: "Acción del usuario", type: "area", w: 28 }, { k: "pantalla", label: "Pantalla(s)", w: 20 }, { k: "dato", label: "Dato generado", w: 20 }, { k: "metrica", label: "Métrica", w: 20 } ],
+      rows: [
+        { etapa: "Acceder", accion: "Se registra, acepta consentimientos y obtiene su QR.", pantalla: "Registro, Consentimiento, Mi QR", dato: "Usuario, consentimientos, QR", metrica: "% registros completos" },
+        { etapa: "Acceder", accion: "Entra al evento mostrando el QR.", pantalla: "Mi QR / Escáner del organizador", dato: "Check-in", metrica: "Tiempo promedio de ingreso" },
+        { etapa: "Descubrir", accion: "Hace el test de intereses y habilidades.", pantalla: "Test de intereses, Resultado", dato: "Perfil de intereses", metrica: "% que completa el test" },
+        { etapa: "Aprender", accion: "Elige una ruta y completa contenidos.", pantalla: "Rutas, Detalle de ruta", dato: "Progreso de ruta", metrica: "% de avance por ruta" },
+        { etapa: "Demostrar", accion: "Completa una misión y sube evidencia; recibe insignia.", pantalla: "Misiones, Entrega, Mis insignias", dato: "Evidencia, insignia otorgada", metrica: "Insignias emitidas por usuario" },
+        { etapa: "Conectar", accion: "Autoriza compartir su CV y se postula a una oferta.", pantalla: "Ofertas, Autorización, Mis postulaciones", dato: "Autorización, postulación", metrica: "Postulaciones / entrevistas" },
+      ] } ],
+},
+/* 6 ------------------------------------------------------------ */
+{ id: "funcionalidades", n: "6", title: "Funcionalidades (módulos)",
+  guide: "Listá los módulos core. Usá MoSCoW para priorizar: todo lo «Must» entra en el MVP.",
+  roles: "PM / BA · Todos",
+  tables: [
+    { id: "modulos", label: "Módulos", cols: [
+      { k: "mod", label: "Módulo", w: 18 }, { k: "desc", label: "Descripción", type: "area", w: 44 }, { k: "prio", label: "Prioridad", type: "select", options: PRIO, w: 18 }, { k: "rol", label: "Rol líder", type: "select", options: ROLES, w: 12 }, { k: "sem", label: "Semana", w: 8 } ],
+      rows: [
+        { mod: "Identidad digital y CV vivo", desc: "Registro/login, perfil, CV digital editable (formación, experiencia, habilidades, insignias), foto opcional.", prio: PRIO[0], rol: "Frontend", sem: "1" },
+        { mod: "Privacidad y consentimiento", desc: "Consentimiento informado por finalidad, panel «Mis datos» (ver, corregir, descargar, eliminar), flujo de menores con tutor.", prio: PRIO[0], rol: "Backend", sem: "1" },
+        { mod: "Eventos y acceso QR", desc: "El organizador crea eventos; la persona se inscribe y recibe un QR firmado; check-in con escáner web.", prio: PRIO[0], rol: "Backend", sem: "2" },
+        { mod: "Descubrir", desc: "Test breve de intereses y habilidades con resultado y rutas sugeridas.", prio: PRIO[1], rol: "UX/UI", sem: "3" },
+        { mod: "Aprender", desc: "Catálogo de rutas de capacitación con contenidos (enlaces, video, lecturas) y progreso.", prio: PRIO[1], rol: "Frontend", sem: "3" },
+        { mod: "Evaluación gamificada", desc: "Misiones y desafíos por competencia, entrega de evidencias, revisión, puntos y niveles.", prio: PRIO[0], rol: "Frontend", sem: "4" },
+        { mod: "Certificación", desc: "Emisión de insignias digitales con criterio y evidencia; página pública de verificación por enlace o QR.", prio: PRIO[0], rol: "Backend", sem: "5" },
+        { mod: "Acceso al empleo", desc: "Empresas, ofertas, autorización específica para compartir el CV, postulación y estados.", prio: PRIO[0], rol: "Backend", sem: "6" },
+        { mod: "Paneles", desc: "Panel de organizador (eventos, check-ins, evidencias) y panel de administración (usuarios, roles, empresas).", prio: PRIO[1], rol: "Frontend", sem: "6" },
+        { mod: "Notificaciones por correo", desc: "Confirmación de registro, QR del evento, insignia obtenida, cambio de estado de postulación.", prio: PRIO[2], rol: "Backend", sem: "7" },
+      ] } ],
+},
+/* 7 ------------------------------------------------------------ */
+{ id: "rf", n: "7", title: "Requisitos funcionales",
+  guide: "Cada requisito debe ser verificable. Escribí el criterio de aceptación en formato Dado / Cuando / Entonces o como condición medible.",
+  roles: "PM / BA · QA",
+  tables: [
+    { id: "rfs", label: "Requisitos funcionales (RF)", cols: [
+      { k: "id", label: "ID", w: 6 }, { k: "mod", label: "Módulo", w: 13 }, { k: "req", label: "Requisito", type: "area", w: 33 }, { k: "ca", label: "Criterio de aceptación", type: "area", w: 32 }, { k: "prio", label: "Prioridad", type: "select", options: PRIO, w: 10 }, { k: "est", label: "Estado", type: "select", options: EST_SIMPLE, w: 6 } ],
+      rows: [
+        ["RF-01","Identidad","Registro con email y contraseña (o enlace mágico) y verificación de email.","Dado un email nuevo, cuando completa el registro y confirma el enlace, entonces la cuenta queda activa; email duplicado muestra error claro."],
+        ["RF-02","Identidad","Inicio y cierre de sesión; recuperación de contraseña.","Credenciales válidas ingresan; inválidas muestran mensaje genérico; el enlace de recuperación vence."],
+        ["RF-03","Privacidad","Consentimiento informado por finalidad antes de guardar datos personales.","No se crea el perfil sin aceptar el consentimiento obligatorio; queda registrada fecha, versión y finalidades aceptadas."],
+        ["RF-04","Identidad","Perfil y CV vivo: datos personales, formación, experiencia, habilidades e intereses.","El usuario crea, edita y elimina cada ítem; los cambios se ven al instante en su CV."],
+        ["RF-05","Privacidad","Panel «Mis datos»: ver, corregir, descargar y solicitar eliminación.","La descarga entrega todos los datos del usuario; la eliminación se confirma y se ejecuta según la política de retención."],
+        ["RF-06","Privacidad","Flujo para menores de edad con consentimiento de madre, padre o tutor.","Si la fecha de nacimiento indica menor, se pide el email del tutor y el perfil queda limitado hasta su aprobación."],
+        ["RF-07","Eventos","El organizador crea y edita eventos (fecha, lugar, cupo).","El evento aparece en el listado público; no se puede superar el cupo."],
+        ["RF-08","Eventos","Inscripción a eventos y generación de QR personal firmado.","Cada inscripción genera un QR único, no reutilizable en otro evento."],
+        ["RF-09","Eventos","Check-in por escaneo de QR desde el navegador del organizador.","QR válido registra la asistencia en menos de 2 s; QR inválido, vencido o ya usado muestra el motivo."],
+        ["RF-10","Eventos","Listado de asistentes y exportación del check-in para el organizador.","El organizador ve solo sus eventos; la exportación incluye solo datos autorizados."],
+        ["RF-11","Descubrir","Test de intereses y habilidades con resultado y rutas sugeridas.","Al terminar el test se muestra un resultado y al menos una ruta sugerida; se puede repetir."],
+        ["RF-12","Aprender","Catálogo de rutas de capacitación con contenidos accesibles.","Cada ruta muestra objetivos, duración y contenidos; los videos tienen subtítulos o transcripción."],
+        ["RF-13","Aprender","Registro de progreso por ruta.","Al marcar un contenido como completado, el porcentaje de la ruta se actualiza."],
+        ["RF-14","Gamificación","Misiones por competencia (individuales y colaborativas).","Cada misión indica competencia, consigna, criterio de aprobación y puntos."],
+        ["RF-15","Gamificación","Entrega de evidencia (texto, enlace o archivo) y revisión por el organizador.","La evidencia queda en estado Enviada → Aprobada / Rechazada con comentario."],
+        ["RF-16","Gamificación","Puntos, niveles y progreso visible en el perfil.","Los puntos se suman solo con misiones aprobadas; el nivel cambia según la tabla definida."],
+        ["RF-17","Certificación","Emisión automática de insignia al aprobar la evidencia requerida.","La insignia incluye nombre, competencia, criterio, emisor, fecha y enlace a la evidencia."],
+        ["RF-18","Certificación","Página pública de verificación de insignia (enlace o QR).","Un tercero sin cuenta ve si la insignia es válida o revocada, sin datos personales extra."],
+        ["RF-19","Certificación","Revocación de insignias por el emisor.","Una insignia revocada figura como «Revocada» en la verificación."],
+        ["RF-20","Empleo","Alta de empresas y publicación de ofertas.","La empresa validada publica ofertas con requisitos e insignias deseadas."],
+        ["RF-21","Empleo","Autorización específica para compartir el CV con una empresa u oferta.","Sin autorización la empresa no ve el CV; la persona puede revocarla y la empresa pierde el acceso."],
+        ["RF-22","Empleo","Postulación a ofertas y seguimiento de estado.","La persona ve el estado (Enviada, En revisión, Entrevista, Finalizada) y recibe aviso de cambios."],
+        ["RF-23","Empleo","Búsqueda de perfiles por insignias y habilidades (solo perfiles que lo permitieron).","Los resultados excluyen perfiles no visibles y menores."],
+        ["RF-24","Administración","Gestión de usuarios, roles y registro de auditoría de accesos a datos personales.","Cada acceso de una empresa a un CV queda registrado con fecha, usuario y finalidad."],
+      ].map(r => ({ id: r[0], mod: r[1], req: r[2], ca: r[3], prio: PRIO[0], est: "Pendiente" })) } ],
+},
+/* 8 ------------------------------------------------------------ */
+{ id: "mvp", n: "8", title: "Requisitos mínimos para aprobar (MVP)",
+  guide: "Lo mínimo que tiene que funcionar en la demo, de punta a punta y sin errores críticos. Dejá explícito lo que queda fuera.",
+  roles: "Todos",
+  fields: [
+    { id: "casoUso", label: "Caso de uso principal de la demo", type: "area", def: "Una persona se registra, obtiene su QR, ingresa a un evento, hace el test, completa una misión, recibe una insignia verificable y autoriza compartir su CV con una empresa que publicó una oferta." },
+    { id: "criterioClave", label: "Criterio / convención clave", type: "area", def: "Una insignia solo se emite con evidencia aprobada según un criterio público. Ningún dato personal se comparte sin consentimiento específico de la persona (o de su tutor si es menor)." },
+    { id: "fueraAlcance", label: "Fuera de alcance del MVP", type: "area", def: "App nativa, pagos, chat en tiempo real, videoentrevistas, matching automático con IA, integración con LinkedIn o bolsas de empleo externas, firma en blockchain, validación de identidad con documento (RENAPER), notificaciones push y geolocalización." },
+  ],
+  tables: [
+    { id: "minimos", label: "Requisitos mínimos por categoría", cols: [
+      { k: "cat", label: "Categoría", w: 22 }, { k: "req", label: "Requisito mínimo para aprobar", type: "area", w: 58 }, { k: "ok", label: "¿Cumple?", type: "select", options: SINO, w: 20 } ],
+      rows: [
+        { cat: "Caso de uso", req: "Recorrido completo Acceder → Descubrir → Aprender → Demostrar → Conectar para un usuario.", ok: "A definir" },
+        { cat: "Identidad digital", req: "Registro, login y perfil con CV vivo editable.", ok: "A definir" },
+        { cat: "Consentimiento", req: "Consentimiento informado registrado antes de guardar datos; flujo de menores con tutor.", ok: "A definir" },
+        { cat: "Mis datos", req: "Ver, corregir, descargar y solicitar eliminación de los datos propios.", ok: "A definir" },
+        { cat: "Acceso con QR", req: "Inscripción a un evento, QR único y check-in desde el navegador.", ok: "A definir" },
+        { cat: "Descubrir", req: "Test de intereses con resultado y ruta sugerida.", ok: "A definir" },
+        { cat: "Aprender", req: "Al menos 2 rutas de capacitación con progreso.", ok: "A definir" },
+        { cat: "Evaluación gamificada", req: "Al menos 5 misiones (una por competencia del video) con evidencia y revisión.", ok: "A definir" },
+        { cat: "Certificación", req: "Emisión de insignias y verificación pública por enlace/QR.", ok: "A definir" },
+        { cat: "Acceso al empleo", req: "Empresa publica oferta; persona autoriza compartir CV y se postula.", ok: "A definir" },
+        { cat: "Roles y permisos", req: "Talento, empresa, organizador y admin con acceso solo a lo suyo.", ok: "A definir" },
+        { cat: "Validaciones", req: "Mensajes claros ante datos faltantes o inválidos; sin pantallas en blanco.", ok: "A definir" },
+        { cat: "Accesibilidad", req: "Navegación por teclado, contraste AA y textos alternativos en el recorrido principal.", ok: "A definir" },
+        { cat: "Entregable", req: "Aplicación web responsive desplegada, con README y datos de prueba.", ok: "A definir" },
+      ] } ],
+},
+/* 9 ------------------------------------------------------------ */
+{ id: "rnf", n: "9", title: "Requisitos no funcionales",
+  guide: "Rendimiento, seguridad, accesibilidad, compatibilidad. Cada uno con una forma de medirlo.",
+  roles: "Frontend · Backend · QA",
+  tables: [
+    { id: "rnfs", label: "Requisitos no funcionales (RNF)", cols: [
+      { k: "id", label: "ID", w: 8 }, { k: "cat", label: "Categoría", w: 16 }, { k: "req", label: "Requisito", type: "area", w: 44 }, { k: "med", label: "Cómo se mide", type: "area", w: 32 } ],
+      rows: [
+        ["RNF-01","Responsive","Funciona en móvil (desde 360 px), tablet y escritorio; diseño mobile first.","Pruebas en 360, 768 y 1280 px sin scroll horizontal."],
+        ["RNF-02","Rendimiento","Carga inicial menor a 3 s en 4G; check-in QR menor a 2 s.","Lighthouse ≥ 80 en rendimiento; medición del endpoint de check-in."],
+        ["RNF-03","Accesibilidad","WCAG 2.1 nivel AA en el recorrido principal; lenguaje simple.","Lighthouse ≥ 90 en accesibilidad, revisión manual con teclado y lector de pantalla."],
+        ["RNF-04","Seguridad","Contraseñas con hash (bcrypt/argon2), HTTPS, tokens con vencimiento, protección OWASP Top 10.","Checklist de seguridad del paso 12 completo; sin hallazgos críticos."],
+        ["RNF-05","Privacidad","Minimización de datos, consentimiento por finalidad, registro de accesos.","Inventario de datos (paso 12) aprobado; auditoría de accesos funcionando."],
+        ["RNF-06","Disponibilidad","Disponible durante los eventos; el QR se puede mostrar sin conexión (guardado en el dispositivo).","Prueba del QR en modo avión; monitoreo básico del back."],
+        ["RNF-07","Compatibilidad","Últimas 2 versiones de Chrome, Edge, Firefox y Safari (iOS).","Matriz de navegadores en QA."],
+        ["RNF-08","Mantenibilidad","Código en repositorio con README, linter, convenciones y PR revisados.","Build y lint sin errores en cada PR."],
+        ["RNF-09","Escalabilidad","Soportar un evento de al menos 600 asistentes con check-in simultáneo.","Prueba de carga básica del endpoint de check-in."],
+        ["RNF-10","Idioma","Español rioplatense, tono cercano y claro.","Revisión de textos (UX writing)."],
+      ].map(r => ({ id: r[0], cat: r[1], req: r[2], med: r[3] })) } ],
+},
+/* 10 ------------------------------------------------------------ */
+{ id: "reglas", n: "10", title: "Reglas de negocio y glosario",
+  guide: "Las reglas que el sistema debe respetar siempre, y un glosario común para que todo el equipo use las mismas palabras.",
+  roles: "PM / BA · Backend",
+  tables: [
+    { id: "rns", label: "Reglas de negocio (RN)", cols: [
+      { k: "id", label: "ID", w: 8 }, { k: "regla", label: "Regla", type: "area", w: 62 }, { k: "mod", label: "Módulo", w: 18 }, { k: "est", label: "Estado", type: "select", options: EST_SIMPLE, w: 12 } ],
+      rows: [
+        ["RN-01","Ningún dato personal se guarda sin consentimiento informado vigente para esa finalidad.","Privacidad"],
+        ["RN-02","Si la persona es menor de 18 años, el perfil queda limitado hasta que el tutor lo apruebe; no es visible para empresas. (Validar edad con asesoría legal.)","Privacidad"],
+        ["RN-03","El CV solo se comparte con una empresa u oferta con autorización específica; la persona puede revocarla en cualquier momento.","Empleo"],
+        ["RN-04","Cada QR es único por persona y evento, vence al finalizar el evento y no puede usarse dos veces.","Eventos"],
+        ["RN-05","Los puntos se otorgan solo por misiones aprobadas; una misión aprobada no suma puntos dos veces.","Gamificación"],
+        ["RN-06","Una insignia se emite solo cuando se cumplen el criterio y la evidencia definidos; queda vinculada a su emisor.","Certificación"],
+        ["RN-07","Una insignia revocada sigue apareciendo en la verificación pública, con estado «Revocada».","Certificación"],
+        ["RN-08","Una empresa debe estar validada por el administrador antes de publicar ofertas o ver perfiles.","Empleo"],
+        ["RN-09","Cada rol accede solo a sus propios datos (mínimo privilegio).","Administración"],
+        ["RN-10","La eliminación de cuenta borra o anonimiza los datos personales; se conservan solo los registros exigidos por la política de retención.","Privacidad"],
+      ].map(r => ({ id: r[0], regla: r[1], mod: r[2], est: "Pendiente" })) },
+    { id: "glosario", label: "Glosario", cols: [
+      { k: "termino", label: "Término", w: 22 }, { k: "def", label: "Definición", type: "area", w: 78 } ],
+      rows: [
+        { termino: "Identidad digital", def: "Cuenta y perfil verificable de la persona dentro de NIRA, con su QR personal." },
+        { termino: "CV vivo", def: "Currículum digital que se actualiza con la formación, experiencia, rutas completadas e insignias obtenidas." },
+        { termino: "Misión", def: "Desafío individual o colaborativo asociado a una competencia, con consigna y criterio de aprobación." },
+        { termino: "Evidencia", def: "Lo que entrega la persona para demostrar la competencia (texto, enlace, archivo)." },
+        { termino: "Insignia digital (Digital Badge)", def: "Credencial verificable que acredita una competencia demostrada con evidencia." },
+        { termino: "Check-in", def: "Registro de ingreso a un evento mediante el escaneo del QR." },
+        { termino: "Consentimiento informado", def: "Aceptación libre, expresa e informada de la persona para usar sus datos con una finalidad concreta." },
+        { termino: "Autorización de CV", def: "Permiso específico, revocable, para que una empresa u oferta vea el CV." },
+      ] } ],
+},
+/* 11 ------------------------------------------------------------ */
+{ id: "gamificacion", n: "11", title: "Evaluación gamificada y certificación",
+  guide: "Tabla del video: cada competencia tiene una evidencia de aprendizaje y termina en una insignia. Completá criterio, puntos y nivel.",
+  roles: "UX/UI · PM / BA · Backend",
+  fields: [
+    { id: "estandar", label: "Estándar de insignias", def: "Open Badges 3.0 (1EdTech), compatible con credenciales verificables. Validar si el MVP usa el estándar completo o una versión simplificada." },
+    { id: "puntaje", label: "Sistema de puntos y niveles", type: "area", def: "Puntos por misión aprobada según dificultad (10 / 20 / 30). Niveles: Explorador (0–49), Aprendiz (50–149), Hacedor (150–299), Referente (300+). Validar nombres con el equipo." },
+    { id: "revision", label: "Quién revisa y en cuánto tiempo", type: "area", ph: "Ej.: el organizador revisa las evidencias en 72 h hábiles; misiones de opción múltiple se corrigen automáticamente." },
+  ],
+  tables: [
+    { id: "competencias", label: "Competencia → Evidencia → Insignia", cols: [
+      { k: "comp", label: "Competencia", w: 18 }, { k: "evid", label: "Evidencia de aprendizaje", w: 18 }, { k: "mision", label: "Misión ejemplo", type: "area", w: 26 }, { k: "criterio", label: "Criterio de aprobación", type: "area", w: 22 }, { k: "insignia", label: "Insignia", w: 16 } ],
+      rows: [
+        { comp: "Resolución de problemas", evid: "Superación de desafío", mision: "Resolver un caso con restricciones de tiempo y recursos.", criterio: "", insignia: "Solucionador/a" },
+        { comp: "Trabajo en equipo", evid: "Misión colaborativa", mision: "Completar en grupo una tarea con roles asignados.", criterio: "", insignia: "Equipo NIRA" },
+        { comp: "IA generativa", evid: "Actividad con IA", mision: "Usar una herramienta de IA para un objetivo concreto y explicar cómo se verificó el resultado.", criterio: "", insignia: "Alfabetización en IA" },
+        { comp: "Análisis de datos", evid: "Interpretar un caso", mision: "Leer una tabla o gráfico simple y responder preguntas de interpretación.", criterio: "", insignia: "Analista inicial" },
+        { comp: "Gestión de proyectos", evid: "Entrega de misión", mision: "Planificar y entregar una mini tarea en tiempo con un tablero ágil.", criterio: "", insignia: "Gestión ágil" },
+        { comp: "Adaptabilidad y resiliencia", evid: "A definir", mision: "", criterio: "", insignia: "" },
+      ] } ],
+},
+/* 12 ------------------------------------------------------------ */
+{ id: "seguridad", n: "12", title: "Identidad, privacidad y seguridad (GRC)",
+  guide: "Lo que exige el video sobre identidad y privacidad, más controles de seguridad mínimos. Base legal de referencia en Argentina: Ley 25.326 de Protección de Datos Personales. Validar con asesoría legal.",
+  roles: "Legal / GRC · Backend · QA",
+  fields: [
+    { id: "politica", label: "Política de privacidad y términos", type: "area", ph: "Quién la redacta, dónde se publica, versión vigente, cómo se notifican los cambios." },
+    { id: "retencion", label: "Política de retención y eliminación", type: "area", ph: "Cuánto tiempo se guardan perfil, evidencias, check-ins y registros de auditoría; qué pasa al eliminar la cuenta." },
+  ],
+  checklists: [
+    { id: "privVideo", label: "Identidad y privacidad (del video)", items: [
+      "Consentimiento informado para todos los datos.",
+      "Acceso controlado a la información personal.",
+      "Capacidad de actualizar y corregir tus datos.",
+      "Autorización específica para compartir el CV.",
+      "Protección especial para los datos de menores.",
+    ] },
+    { id: "secChecks", label: "Controles de seguridad mínimos", items: [
+      "HTTPS en todos los entornos públicos.",
+      "Contraseñas con hash (bcrypt/argon2), nunca en texto plano ni en logs.",
+      "Tokens de sesión con vencimiento y cierre de sesión que los invalida.",
+      "Control de acceso por rol verificado en el servidor (no solo en la interfaz).",
+      "Validación de entradas en front y back; protección contra inyección y XSS.",
+      "QR firmado (no adivinable) y verificado en el servidor.",
+      "Límite de intentos en login y recuperación de contraseña.",
+      "Subida de archivos con tipo y tamaño permitidos.",
+      "Secretos en variables de entorno, fuera del repositorio.",
+      "Registro de auditoría de accesos a datos personales.",
+      "Copias de seguridad de la base de datos y prueba de restauración.",
+      "Dependencias revisadas (npm audit) antes del deploy.",
+    ] } ],
+  tables: [
+    { id: "datos", label: "Inventario de datos personales", cols: [
+      { k: "dato", label: "Dato", w: 16 }, { k: "fin", label: "Finalidad", type: "area", w: 24 }, { k: "base", label: "Base / consentimiento", w: 16 }, { k: "acceso", label: "Quién accede", w: 16 }, { k: "ret", label: "Retención", w: 14 }, { k: "sens", label: "¿Sensible?", type: "select", options: SINO, w: 14 } ],
+      rows: [
+        { dato: "Nombre, email, teléfono", fin: "Crear la cuenta y contactar a la persona.", base: "Consentimiento de registro", acceso: "Persona, admin", ret: "Mientras la cuenta esté activa", sens: "No" },
+        { dato: "Fecha de nacimiento", fin: "Detectar menores y aplicar protección especial.", base: "Consentimiento de registro", acceso: "Persona, admin", ret: "", sens: "No" },
+        { dato: "Datos del tutor", fin: "Consentimiento de menores.", base: "Consentimiento del tutor", acceso: "Admin", ret: "", sens: "No" },
+        { dato: "CV (formación, experiencia)", fin: "Mostrar el perfil y postular.", base: "Autorización específica por empresa", acceso: "Persona, empresa autorizada", ret: "", sens: "No" },
+        { dato: "Evidencias de misiones", fin: "Evaluar competencias y emitir insignias.", base: "Consentimiento de uso", acceso: "Persona, organizador revisor", ret: "", sens: "A definir" },
+        { dato: "Check-ins", fin: "Registrar asistencia a eventos.", base: "Inscripción al evento", acceso: "Persona, organizador", ret: "", sens: "No" },
+      ] } ],
+},
+/* 13 ------------------------------------------------------------ */
+{ id: "arquitectura", n: "13", title: "Arquitectura y tecnologías",
+  guide: "Stack sugerido alineado con los proyectos de referencia. Documentá la decisión final, el modelo de datos y el contrato de API.",
+  roles: "Frontend · Backend",
+  fields: [
+    { id: "decisionArq", label: "Decisión de arquitectura", type: "area", def: "Front SPA (React + Vite) que consume una API REST (Node.js + Express) con base PostgreSQL vía Prisma. Autenticación con JWT. Archivos de evidencias en almacenamiento de objetos. Front desplegado en Vercel y back en Render o Railway." },
+    { id: "entornos", label: "Entornos y variables de entorno", type: "area", ph: "local / staging / producción. Variables: DATABASE_URL, JWT_SECRET, QR_SIGNING_KEY, STORAGE_*, MAIL_* (sin valores reales en el documento)." },
+  ],
+  tables: [
+    { id: "stack", label: "Tecnologías y herramientas", cols: [
+      { k: "nec", label: "Necesidad", w: 26 }, { k: "tec", label: "Tecnología / herramienta", w: 40 }, { k: "est", label: "Estado", type: "select", options: EST_SIMPLE, w: 34 } ],
+      rows: [
+        ["Frontend web","React + Vite"],["Lenguaje","TypeScript (o JavaScript si el equipo lo decide)"],["Estilos / responsive","Tailwind CSS"],
+        ["Formularios y validación","React Hook Form + Zod"],["Backend / API","Node.js + Express (REST)"],["ORM y base de datos","Prisma + PostgreSQL"],
+        ["Autenticación","JWT + bcrypt (o Supabase Auth)"],["QR","Librería qrcode (generar) + html5-qrcode (escanear)"],["Insignias","Open Badges 3.0 (JSON firmado) + página de verificación"],
+        ["Archivos de evidencias","Cloudinary / Amazon S3 / Supabase Storage"],["Correo","Resend / Nodemailer"],["Pruebas unitarias","Vitest / Jest + Supertest"],
+        ["Pruebas end-to-end","Playwright"],["Pruebas de API","Postman"],["Diseño UX/UI","Figma"],["Flujos","FigJam / Miro"],
+        ["Gestión","Jira / Trello"],["Control de versiones","Git + GitHub"],["Hosting","Vercel (front) + Render / Railway (back)"],
+      ].map(r => ({ nec: r[0], tec: r[1], est: "Pendiente" })) },
+    { id: "entidades", label: "Modelo de datos (entidades)", cols: [
+      { k: "ent", label: "Entidad", w: 18 }, { k: "attr", label: "Atributos clave", type: "area", w: 48 }, { k: "rel", label: "Relaciones", type: "area", w: 34 } ],
+      rows: [
+        { ent: "Usuario", attr: "id, email, hash, rol, fechaNacimiento, esMenor, estado", rel: "1–1 Perfil; 1–N Consentimiento" },
+        { ent: "Perfil / CV", attr: "nombre, foto, ubicación, formación[], experiencia[], habilidades[], intereses[], visibilidad", rel: "1–1 Usuario" },
+        { ent: "Consentimiento", attr: "finalidad, versión, aceptado, fecha, tutorEmail", rel: "N–1 Usuario" },
+        { ent: "Evento", attr: "nombre, fecha, lugar, cupo, organizadorId", rel: "1–N Inscripción" },
+        { ent: "Inscripción / Check-in", attr: "qrToken, vence, checkinAt", rel: "N–1 Usuario; N–1 Evento" },
+        { ent: "Ruta / Contenido", attr: "título, objetivos, duración, contenidos[]", rel: "1–N Progreso" },
+        { ent: "Misión", attr: "título, competencia, consigna, criterio, puntos, tipo", rel: "1–N Evidencia; N–1 Insignia" },
+        { ent: "Evidencia", attr: "contenido, archivoUrl, estado, comentario, revisorId", rel: "N–1 Usuario; N–1 Misión" },
+        { ent: "Insignia / InsigniaOtorgada", attr: "nombre, criterio, emisor, imagen / fecha, estado, urlVerificación", rel: "N–1 Usuario" },
+        { ent: "Empresa / Oferta", attr: "razón social, validada / título, requisitos, insigniasDeseadas", rel: "1–N Oferta; 1–N Postulación" },
+        { ent: "Autorización CV / Postulación", attr: "empresaId, ofertaId, vigente, estado", rel: "N–1 Usuario" },
+        { ent: "AuditLog", attr: "actorId, acción, recurso, fecha, finalidad", rel: "—" },
+      ] },
+    { id: "api", label: "Contrato de API (endpoints principales)", cols: [
+      { k: "met", label: "Método", w: 10 }, { k: "ruta", label: "Ruta", w: 30 }, { k: "rol", label: "Rol", w: 16 }, { k: "desc", label: "Descripción", type: "area", w: 44 } ],
+      rows: [
+        ["POST","/api/auth/register","Público","Registro con consentimiento."],["POST","/api/auth/login","Público","Inicio de sesión."],
+        ["GET / PUT","/api/me/profile","Talento","Ver y editar perfil y CV."],["GET / DELETE","/api/me/data","Talento","Descargar datos / solicitar eliminación."],
+        ["POST","/api/events","Organizador","Crear evento."],["POST","/api/events/:id/register","Talento","Inscribirse y obtener QR."],
+        ["POST","/api/checkin","Organizador","Validar QR y registrar ingreso."],["GET","/api/missions","Talento","Listar misiones."],
+        ["POST","/api/missions/:id/evidence","Talento","Enviar evidencia."],["PATCH","/api/evidence/:id","Organizador","Aprobar o rechazar evidencia."],
+        ["GET","/api/badges/verify/:code","Público","Verificar insignia."],["POST","/api/offers","Empresa","Publicar oferta."],
+        ["POST","/api/offers/:id/apply","Talento","Postular con autorización de CV."],["GET","/api/admin/audit","Admin","Ver auditoría de accesos."],
+      ].map(r => ({ met: r[0], ruta: r[1], rol: r[2], desc: r[3] })) } ],
+},
+/* 14 ------------------------------------------------------------ */
+{ id: "uxui", n: "14", title: "UX/UI y accesibilidad",
+  guide: "Inventario de pantallas con sus estados, sistema de diseño y checklist de accesibilidad. El estilo visual del video (amarillo, azul, ilustración a mano) es una buena base.",
+  roles: "UX/UI · Diseño gráfico · Frontend",
+  fields: [
+    { id: "ds", label: "Sistema de diseño (colores, tipografía, componentes)", type: "area", def: "Colores base tomados del video: amarillo #F5C518 (acento), azul #0E2A3F (texto y encabezados), celeste de resaltado y fondo claro con cuadrícula. Ilustraciones de trazo a mano. Validar contraste del amarillo sobre blanco (no usarlo para texto)." },
+    { id: "tono", label: "Tono de voz y microcopy", type: "area", def: "Cercano, motivador y claro. Frases cortas, voseo, sin tecnicismos. Ej.: «Tu QR está listo», «Ganaste la insignia Trabajo en equipo»." },
+    { id: "figma", label: "Enlace a Figma / prototipo", ph: "https://www.figma.com/…" },
+  ],
+  tables: [
+    { id: "pantallas", label: "Inventario de pantallas", cols: [
+      { k: "id", label: "ID", w: 7 }, { k: "pant", label: "Pantalla", w: 20 }, { k: "perfil", label: "Perfil", w: 13 }, { k: "obj", label: "Objetivo", type: "area", w: 26 }, { k: "estados", label: "Estados (vacío, carga, error, éxito)", type: "area", w: 20 }, { k: "est", label: "Diseño", type: "select", options: EST_SIMPLE, w: 14 } ],
+      rows: [
+        ["P-01","Landing","Público","Explicar NIRA y llevar al registro."],["P-02","Registro / Login","Público","Crear cuenta o ingresar."],
+        ["P-03","Consentimiento y onboarding","Talento","Aceptar finalidades y completar datos mínimos."],["P-04","Perfil / CV vivo","Talento","Ver y editar el CV."],
+        ["P-05","Mi QR","Talento","Mostrar el QR del evento (también sin conexión)."],["P-06","Test de intereses","Talento","Descubrir intereses y habilidades."],
+        ["P-07","Rutas de aprendizaje","Talento","Elegir y avanzar en una ruta."],["P-08","Misiones","Talento","Ver misiones y entregar evidencias."],
+        ["P-09","Mis insignias","Talento","Ver y compartir insignias."],["P-10","Verificación de insignia","Público","Comprobar validez."],
+        ["P-11","Ofertas y postulaciones","Talento","Postularse y seguir el estado."],["P-12","Mis datos y privacidad","Talento","Ver, corregir, descargar o eliminar datos; gestionar autorizaciones."],
+        ["P-13","Panel de empresa","Empresa","Publicar ofertas y ver perfiles autorizados."],["P-14","Panel de organizador","Organizador","Eventos, escáner QR, revisión de evidencias."],
+        ["P-15","Panel de administración","Admin","Usuarios, roles, empresas, auditoría."],
+      ].map(r => ({ id: r[0], pant: r[1], perfil: r[2], obj: r[3], estados: "", est: "Pendiente" })) } ],
+  checklists: [
+    { id: "a11y", label: "Accesibilidad (WCAG 2.1 AA)", items: [
+      "Contraste de texto ≥ 4.5:1 (≥ 3:1 en textos grandes e íconos).",
+      "Todo se puede usar con teclado y el foco es visible.",
+      "Etiquetas asociadas a cada campo y errores anunciados.",
+      "Imágenes e ilustraciones con texto alternativo.",
+      "No se transmite información solo con el color.",
+      "Áreas táctiles de al menos 44 × 44 px.",
+      "Videos con subtítulos o transcripción.",
+      "Textos en lenguaje simple (lectura fácil).",
+    ] } ],
+},
+/* 15 ------------------------------------------------------------ */
+{ id: "qa", n: "15", title: "QA y pruebas",
+  guide: "Estrategia, matriz de casos (normales, límite y negativos) y Definition of Done.",
+  roles: "QA · Todos",
+  fields: [
+    { id: "estrategia", label: "Estrategia de pruebas", type: "area", def: "Pruebas unitarias de reglas de negocio (back), pruebas de API con Postman, pruebas end-to-end del recorrido principal con Playwright, pruebas exploratorias por rol, revisión de accesibilidad y una prueba de usabilidad con 5 personas usuarias antes de la demo." },
+    { id: "bugs", label: "Gestión de bugs", type: "area", def: "Severidad P0 (bloquea la demo o expone datos) a P3 (cosmético). Se registran en Jira/Trello con pasos, resultado esperado, resultado obtenido y captura." },
+  ],
+  tables: [
+    { id: "casos", label: "Matriz de casos de prueba", cols: [
+      { k: "id", label: "ID", w: 7 }, { k: "mod", label: "Módulo", w: 12 }, { k: "caso", label: "Caso", type: "area", w: 26 }, { k: "esp", label: "Resultado esperado", type: "area", w: 27 }, { k: "tipo", label: "Tipo", type: "select", options: ["Normal","Límite","Negativo","Seguridad","Accesibilidad"], w: 12 }, { k: "est", label: "Estado", type: "select", options: ["Sin ejecutar","Pasa","Falla","Bloqueado"], w: 16 } ],
+      rows: [
+        ["CP-01","Identidad","Registro con datos válidos.","Cuenta creada y email de verificación enviado.","Normal"],
+        ["CP-02","Identidad","Registro con email existente (con mayúsculas o espacios).","Mensaje claro; no se crea una segunda cuenta.","Negativo"],
+        ["CP-03","Privacidad","Intentar avanzar sin aceptar el consentimiento.","No permite continuar y explica por qué.","Negativo"],
+        ["CP-04","Privacidad","Registro de una persona de 15 años.","Pide datos del tutor; perfil limitado y no visible para empresas.","Límite"],
+        ["CP-05","Eventos","Escanear un QR válido.","Check-in registrado en menos de 2 s.","Normal"],
+        ["CP-06","Eventos","Escanear el mismo QR dos veces o un QR de otro evento.","Rechaza e informa el motivo.","Negativo"],
+        ["CP-07","Gamificación","Aprobar una evidencia.","Suma puntos una sola vez y emite la insignia.","Normal"],
+        ["CP-08","Certificación","Verificar una insignia revocada.","Muestra «Revocada».","Límite"],
+        ["CP-09","Empleo","Empresa intenta ver un CV sin autorización (por URL directa).","Respuesta 403; queda en auditoría.","Seguridad"],
+        ["CP-10","Empleo","Persona revoca la autorización.","La empresa pierde el acceso de inmediato.","Seguridad"],
+        ["CP-11","Seguridad","Ingresar <script> en el nombre o en una evidencia.","Se guarda como texto, no se ejecuta.","Seguridad"],
+        ["CP-12","Accesibilidad","Recorrer registro y misiones solo con teclado.","Se completa sin mouse con foco visible.","Accesibilidad"],
+      ].map(r => ({ id: r[0], mod: r[1], caso: r[2], esp: r[3], tipo: r[4], est: "Sin ejecutar" })) } ],
+  checklists: [
+    { id: "dod", label: "Definition of Done (por historia)", items: [
+      "Cumple los criterios de aceptación.",
+      "Código revisado en PR y fusionado a la rama principal.",
+      "Pruebas unitarias o de API escritas y pasando.",
+      "Probado en móvil y escritorio.",
+      "Sin errores en consola ni pantallas en blanco.",
+      "Textos revisados y accesibilidad básica verificada.",
+      "Documentación (README / contrato de API) actualizada.",
+      "Tarjeta movida a Hecho en el tablero.",
+    ] } ],
+},
+/* 16 ------------------------------------------------------------ */
+{ id: "metricas", n: "16", title: "Métricas y KPIs",
+  guide: "Cómo vamos a saber si NIRA funciona. Cada KPI necesita una fórmula y el evento que lo alimenta.",
+  roles: "Data · PM / BA",
+  tables: [
+    { id: "kpis", label: "KPIs", cols: [
+      { k: "kpi", label: "KPI", w: 20 }, { k: "form", label: "Fórmula", type: "area", w: 32 }, { k: "meta", label: "Meta MVP", w: 16 }, { k: "evento", label: "Evento / fuente", w: 32 } ],
+      rows: [
+        { kpi: "Tiempo de ingreso al evento", form: "Promedio (checkinAt − llegada a la fila) o tiempo de escaneo", meta: "< 30 s por persona", evento: "checkin_completed" },
+        { kpi: "Activación", form: "Usuarios con perfil completo / registrados", meta: "≥ 60 %", evento: "profile_completed" },
+        { kpi: "Aprendizaje", form: "Usuarios con ≥ 1 ruta completada / activos", meta: "≥ 30 %", evento: "route_completed" },
+        { kpi: "Insignias por usuario", form: "Insignias emitidas / usuarios activos", meta: "≥ 1", evento: "badge_issued" },
+        { kpi: "Conexión con empleo", form: "Postulaciones con CV autorizado / usuarios activos", meta: "A definir", evento: "application_submitted" },
+        { kpi: "Confianza", form: "Verificaciones de insignias por terceros", meta: "A definir", evento: "badge_verified" },
+      ] } ],
+},
+/* 17 ------------------------------------------------------------ */
+{ id: "sprints", n: "17", title: "Plan de trabajo semanal por rol",
+  guide: "Mismo formato que el plan de referencia: objetivo de la semana, tareas por rol, entregable y dependencias.",
+  roles: "PM / BA · Todos",
+  tables: [
+    { id: "plan", label: "Plan por semana", cols: [
+      { k: "sem", label: "Semana", w: 7 }, { k: "obj", label: "Objetivo", type: "area", w: 13 }, { k: "ux", label: "UX/UI", type: "area", w: 13 }, { k: "front", label: "Frontend", type: "area", w: 13 }, { k: "back", label: "Backend", type: "area", w: 13 }, { k: "qa", label: "QA", type: "area", w: 13 }, { k: "ent", label: "Entregable", type: "area", w: 14 }, { k: "dep", label: "Dependencias", type: "area", w: 14 } ],
+      rows: [
+        { sem: "0 · Planning", obj: "Alcance, reglas de privacidad, competencias e insignias acordadas.", ux: "Recorrido Acceder→Conectar, inventario de pantallas, wireframes iniciales.", front: "Repo, Vite + Tailwind, rutas y estructura.", back: "Arquitectura, modelo de datos y contrato de API.", qa: "Estrategia y matriz inicial de pruebas.", ent: "Este documento validado; wireframes; repos creados.", dep: "Brief aprobado por el cliente." },
+        { sem: "1", obj: "Identidad digital y consentimiento.", ux: "Registro, consentimiento, perfil/CV.", front: "Formularios de registro, login y perfil.", back: "Auth, usuarios, consentimientos, perfil.", qa: "Casos de registro, login y consentimiento.", ent: "Registro + perfil funcionando.", dep: "Textos de consentimiento." },
+        { sem: "2", obj: "Eventos y acceso QR.", ux: "Mi QR, escáner, listado de eventos.", front: "Inscripción, QR, escáner web.", back: "Eventos, inscripciones, QR firmado, check-in.", qa: "QR válido, repetido, vencido.", ent: "Check-in con QR de punta a punta.", dep: "Semana 1." },
+        { sem: "3", obj: "Descubrir y Aprender.", ux: "Test de intereses y rutas.", front: "Test, resultado, rutas y progreso.", back: "Preguntas, resultados, rutas, progreso.", qa: "Test y progreso.", ent: "Test y 2 rutas con progreso.", dep: "Contenidos de rutas." },
+        { sem: "4", obj: "Evaluación gamificada.", ux: "Misiones, entrega de evidencia, puntos.", front: "Misiones, evidencias, puntos y niveles.", back: "Misiones, evidencias, revisión, puntos.", qa: "Aprobación, rechazo, doble suma.", ent: "5 misiones con evidencia y revisión.", dep: "Tabla de competencias (paso 11)." },
+        { sem: "5", obj: "Certificación.", ux: "Mis insignias y verificación pública.", front: "Insignias y página de verificación.", back: "Emisión, verificación, revocación.", qa: "Insignia válida y revocada.", ent: "Insignias verificables.", dep: "Semana 4." },
+        { sem: "6", obj: "Acceso al empleo e integración.", ux: "Ofertas, autorización de CV, panel de empresa.", front: "Ofertas, postulación, paneles.", back: "Empresas, ofertas, autorizaciones, auditoría.", qa: "Primer e2e del recorrido completo.", ent: "MVP integrado de punta a punta.", dep: "Semanas 1 a 5." },
+        { sem: "7", obj: "Hardening: validaciones, seguridad, accesibilidad.", ux: "Estados vacíos y de error; revisión de contraste.", front: "Validaciones, responsive, teclado.", back: "Rate limit, validación de servidor, backups.", qa: "Regresión, seguridad y accesibilidad.", ent: "Sin bugs P0/P1; code freeze.", dep: "Backlog de bugs priorizado." },
+        { sem: "8", obj: "Deploy, pruebas con usuarios y demo.", ux: "Prueba de usabilidad y material de demo.", front: "Deploy en Vercel, README.", back: "Deploy en Render/Railway, datos de prueba.", qa: "Pruebas en producción.", ent: "MVP desplegado y presentación final.", dep: "Code freeze de semana 7." },
+      ] } ],
+},
+/* 18 ------------------------------------------------------------ */
+{ id: "backlog", n: "18", title: "Backlog inicial",
+  guide: "Formato del backlog de referencia. Las fechas se calculan desde la fecha de inicio (paso 0) con el botón «Calcular fechas». Los responsables quedan «Por asignar / validar» hasta confirmar disponibilidad.",
+  roles: "PM / BA",
+  dateTool: true,
+  tables: [
+    { id: "back", label: "Backlog", cols: [
+      { k: "id", label: "ID", w: 8 }, { k: "sem", label: "Semana", type: "number", w: 5 }, { k: "ini", label: "Inicio", type: "date", w: 9 }, { k: "fin", label: "Fin", type: "date", w: 9 }, { k: "rol", label: "Rol", type: "select", options: ROLES, w: 9 }, { k: "tarea", label: "Tarea", type: "area", w: 18 }, { k: "h", label: "Estim. (h)", type: "number", w: 5 }, { k: "ent", label: "Entregable / resultado", type: "area", w: 16 }, { k: "resp", label: "Responsable", w: 9 }, { k: "est", label: "Estado", type: "select", options: EST_BACK, w: 12 } ],
+      rows: [
+        [0,"Todos","Revisar y validar este documento (alcance, RF, reglas, privacidad).",4,"Documento v1 aprobado por el equipo."],
+        [0,"PM / BA","Kick-off, canales, tablero y Definition of Done.",2,"Tablero creado y DoD acordada."],
+        [0,"UX/UI","Recorrido del usuario y wireframes iniciales.",6,"Wireframes de P-01 a P-09."],
+        [0,"Frontend","Setup con Vite, Tailwind, rutas y estructura.",4,"Repo front corriendo."],
+        [0,"Backend","Setup Express + Prisma y esquema inicial.",5,"Repo back corriendo con esquema."],
+        [0,"QA","Estrategia y matriz inicial de pruebas.",3,"Plan de pruebas."],
+        [0,"Legal / GRC","Textos de consentimiento, privacidad y flujo de menores.",3,"Textos aprobados."],
+        [1,"UX/UI","Diseño UI de registro, consentimiento y perfil/CV.",6,"Pantallas en Figma."],
+        [1,"Frontend","Registro, login, consentimiento y perfil.",8,"Flujo navegable."],
+        [1,"Backend","Auth, usuarios, consentimientos y perfil.",8,"Endpoints documentados."],
+        [1,"QA","Casos de identidad y privacidad.",4,"Casos ejecutados."],
+        [2,"UX/UI","Diseño de Mi QR, eventos y escáner.",4,"Pantallas en Figma."],
+        [2,"Frontend","Inscripción, QR y escáner web.",8,"Check-in desde el navegador."],
+        [2,"Backend","Eventos, inscripciones, QR firmado y check-in.",8,"Endpoints de eventos."],
+        [2,"QA","Pruebas de QR (válido, repetido, vencido).",3,"Casos ejecutados."],
+        [3,"UX/UI","Test de intereses y rutas.",5,"Pantallas en Figma."],
+        [3,"Frontend","Test, resultado y rutas con progreso.",8,"Módulos navegables."],
+        [3,"Backend","Preguntas, resultados, rutas y progreso.",6,"Endpoints."],
+        [4,"UX/UI","Misiones, evidencias, puntos y niveles.",5,"Pantallas en Figma."],
+        [4,"Frontend","Misiones y entrega de evidencias.",8,"Módulo navegable."],
+        [4,"Backend","Misiones, evidencias, revisión y puntos.",8,"Endpoints."],
+        [4,"QA","Pruebas de gamificación.",4,"Casos ejecutados."],
+        [5,"Diseño gráfico","Diseño de las insignias (6 competencias).",5,"Set de insignias SVG/PNG."],
+        [5,"Frontend","Mis insignias y verificación pública.",6,"Páginas funcionando."],
+        [5,"Backend","Emisión, verificación y revocación.",6,"Endpoints."],
+        [6,"UX/UI","Ofertas, autorización de CV y panel de empresa.",5,"Pantallas en Figma."],
+        [6,"Frontend","Ofertas, postulación y paneles.",10,"MVP integrado."],
+        [6,"Backend","Empresas, ofertas, autorizaciones y auditoría.",8,"Endpoints."],
+        [6,"QA","Primer e2e del recorrido completo.",5,"Reporte de bugs priorizado."],
+        [7,"Todos","Corrección de bugs P0/P1.",8,"Sin bugs críticos."],
+        [7,"QA","Regresión, seguridad y accesibilidad.",6,"Reporte final de QA."],
+        [7,"Data","Eventos de medición y tablero de KPIs.",4,"KPIs medibles."],
+        [8,"Frontend","Deploy del front y README.",3,"URL pública."],
+        [8,"Backend","Deploy del back y datos de prueba.",3,"API pública."],
+        [8,"UX/UI","Prueba de usabilidad con 5 usuarios y material de demo.",5,"Hallazgos y presentación."],
+        [8,"Todos","Demo final y retrospectiva.",2,"Presentación al cliente."],
+      ].map((r, i) => ({ id: "NIRA-W" + String(r[0]).padStart(2, "0") + "-" + String(i + 1).padStart(3, "0"), sem: String(r[0]), ini: "", fin: "", rol: r[1], tarea: r[2], h: String(r[3]), ent: r[4], resp: "Por asignar / validar", est: EST_BACK[0] })) } ],
+},
+/* 19 ------------------------------------------------------------ */
+{ id: "riesgos", n: "19", title: "Riesgos",
+  guide: "Riesgos de producto, técnicos, de equipo y de privacidad, con su mitigación.",
+  roles: "PM / BA · Legal / GRC",
+  tables: [
+    { id: "riesgosT", label: "Matriz de riesgos", cols: [
+      { k: "r", label: "Riesgo", type: "area", w: 30 }, { k: "p", label: "Probabilidad", type: "select", options: NIVEL, w: 11 }, { k: "i", label: "Impacto", type: "select", options: NIVEL, w: 11 }, { k: "m", label: "Mitigación", type: "area", w: 34 }, { k: "resp", label: "Responsable", w: 14 } ],
+      rows: [
+        { r: "Exposición de datos personales o de menores.", p: "Media", i: "Alta", m: "Controles del paso 12, mínimo privilegio, auditoría, datos ficticios en pruebas.", resp: "" },
+        { r: "Alcance demasiado grande para 8 semanas.", p: "Alta", i: "Alta", m: "MoSCoW estricto; congelar alcance en semana 6.", resp: "" },
+        { r: "Conectividad baja en eventos.", p: "Media", i: "Media", m: "QR disponible sin conexión; reintentos en el escáner.", resp: "" },
+        { r: "Roles vacantes o baja disponibilidad del equipo.", p: "Media", i: "Alta", m: "Confirmar disponibilidad en semana 0; reasignar tareas.", resp: "" },
+        { r: "Insignias sin credibilidad para las empresas.", p: "Media", i: "Media", m: "Criterios públicos, evidencia enlazada, estándar Open Badges.", resp: "" },
+        { r: "Contenidos de capacitación no disponibles a tiempo.", p: "Media", i: "Media", m: "Usar contenidos abiertos existentes para el MVP.", resp: "" },
+      ] } ],
+},
+/* 20 ------------------------------------------------------------ */
+{ id: "future", n: "20", title: "Future Scope / Escalabilidad futura",
+  guide: "Todo lo valioso que no entra en el MVP. Sirve para cuidar el alcance sin perder ideas.",
+  roles: "PM / BA",
+  tables: [
+    { id: "futuro", label: "Funcionalidades futuras", cols: [
+      { k: "cat", label: "Categoría", w: 22 }, { k: "func", label: "Funcionalidad futura", type: "area", w: 78 } ],
+      rows: [
+        ["App móvil","App nativa con QR en la billetera del teléfono."],["Matching con IA","Recomendación de ofertas y rutas según perfil e insignias."],
+        ["IA asistente","Orientación vocacional y feedback de evidencias con IA (con supervisión humana)."],["Identidad verificada","Validación de identidad con documento."],
+        ["Integraciones","LinkedIn, bolsas de empleo, sistemas de RR. HH."],["Insignias avanzadas","Credenciales firmadas y exportables a billeteras digitales."],
+        ["Analítica","Tablero de impacto para organizadores y financiadores."],["Gamificación social","Equipos, rankings opcionales y desafíos entre instituciones."],
+        ["Contenidos","Marketplace de cursos de aliados."],["Accesibilidad","Lectura fácil, lengua de señas e idiomas originarios."],
+        ["Comunicación","Chat empresa–candidato y videoentrevistas."],["Notificaciones","Push y WhatsApp."],
+      ].map(r => ({ cat: r[0], func: r[1] })) } ],
+},
+/* 21 ------------------------------------------------------------ */
+{ id: "decisiones", n: "21", title: "Decisiones pendientes y validación",
+  guide: "Lo que hay que decidir antes de empezar a desarrollar. Pasos de validación recomendados: 1) revisar alcance y tareas; 2) confirmar roles y disponibilidad; 3) revisar estimaciones y dependencias; 4) acordar hitos y criterios de aceptación; 5) aprobar; 6) cargar en Jira/Trello.",
+  roles: "Todos",
+  tables: [
+    { id: "decs", label: "Decisiones", cols: [
+      { k: "dec", label: "Decisión", type: "area", w: 32 }, { k: "op", label: "Opciones", type: "area", w: 28 }, { k: "resp", label: "Quién decide", w: 14 }, { k: "fecha", label: "Fecha", type: "date", w: 12 }, { k: "est", label: "Estado", type: "select", options: EST_SIMPLE, w: 14 } ],
+      rows: [
+        { dec: "Edad mínima y tratamiento de menores.", op: "13+ con tutor / 16+ con tutor / solo mayores en el MVP", resp: "Cliente + Legal", fecha: "", est: "Pendiente" },
+        { dec: "¿Las empresas buscan perfiles o solo reciben postulaciones?", op: "Solo postulaciones / búsqueda de perfiles visibles", resp: "Cliente", fecha: "", est: "Pendiente" },
+        { dec: "Estándar de insignias.", op: "Open Badges 3.0 completo / versión simplificada", resp: "Backend", fecha: "", est: "Pendiente" },
+        { dec: "Quién revisa las evidencias.", op: "Organizador / mentores / corrección automática", resp: "Cliente", fecha: "", est: "Pendiente" },
+        { dec: "Stack final y hosting.", op: "React + Express + PostgreSQL / Next.js + Supabase", resp: "Front + Back", fecha: "", est: "Pendiente" },
+        { dec: "Contenidos de las rutas de aprendizaje.", op: "Propios / abiertos / de aliados", resp: "Cliente", fecha: "", est: "Pendiente" },
+        { dec: "Fecha de kick-off y de demo final.", op: "", resp: "PM", fecha: "", est: "Pendiente" },
+      ] } ],
+  checklists: [
+    { id: "valid", label: "Validación del documento", items: [
+      "Alcance y tareas revisados por el equipo.",
+      "Roles y disponibilidad confirmados.",
+      "Estimaciones y dependencias revisadas.",
+      "Hitos y criterios de aceptación acordados.",
+      "Documento aprobado por el cliente.",
+      "Backlog cargado en Jira/Trello.",
+    ] } ],
+},
+];
+
+</script>
+<script>
+/* ====== MOTOR DE LA GUÍA ====== */
+(function () {
+"use strict";
+const KEY = "nira-mvp-guia-v1";
+const STATUS = ["Pendiente", "En progreso", "En revisión", "Validado"];
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const clone = o => JSON.parse(JSON.stringify(o));
+const FINAL = { id: "cierre", n: String(SECTIONS.length), title: "Revisión final y exportación" };
+const STEPS = SECTIONS.concat([FINAL]);
+
+/* ---------- estado ---------- */
+function defaults() {
+  const st = { v: {}, t: {}, c: {}, s: {}, cur: 0, saved: null };
+  SECTIONS.forEach(sec => {
+    (sec.fields || []).forEach(f => st.v[f.id] = f.def || "");
+    (sec.tables || []).forEach(t => st.t[t.id] = clone(t.rows || []));
+    (sec.checklists || []).forEach(l => st.c[l.id] = l.items.map(() => ({ ok: false, nota: "" })));
+    st.s[sec.id] = "Pendiente";
+  });
+  return st;
+}
+function load() {
+  const d = defaults();
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (!raw) return d;
+    const p = JSON.parse(raw);
+    ["v", "t", "c", "s"].forEach(k => Object.assign(d[k], p[k] || {}));
+    d.cur = Math.min(p.cur || 0, STEPS.length - 1); d.saved = p.saved || null;
+  } catch (e) { /* almacenamiento no disponible */ }
+  return d;
+}
+let S = load();
+let saveTimer = null;
+function persist() {
+  clearTimeout(saveTimer); saveTimer = null;
+  S.saved = new Date().toISOString();
+  try { localStorage.setItem(KEY, JSON.stringify(S)); setSaved(); }
+  catch (e) { $("#saved").textContent = "No se pudo guardar en este navegador: exportá un respaldo (JSON)."; }
+}
+function save() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => { persist(); refreshNav(); }, 300);
+}
+window.addEventListener("pagehide", () => { if (saveTimer) persist(); });
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden" && saveTimer) persist(); });
+function setSaved() {
+  if (!S.saved) { $("#saved").textContent = "Sin cambios guardados"; return; }
+  const d = new Date(S.saved);
+  $("#saved").textContent = "Guardado automático · " + d.toLocaleDateString("es-AR") + " " + d.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" });
+}
+
+/* ---------- completitud ---------- */
+const filled = v => String(v == null ? "" : v).trim() !== "";
+function secStats(sec) {
+  let tot = 0, ok = 0; const miss = [];
+  (sec.fields || []).forEach(f => { tot++; if (filled(S.v[f.id])) ok++; else miss.push("Campo vacío: " + f.label); });
+  (sec.tables || []).forEach(t => {
+    const rows = S.t[t.id] || [];
+    let cells = 0, full = 0;
+    rows.forEach(r => t.cols.forEach(c => { cells++; if (filled(r[c.k])) full++; }));
+    tot += 2;
+    if (rows.length) ok++; else miss.push("Tabla sin filas: " + t.label);
+    if (cells && full === cells) ok++; else if (rows.length) miss.push(t.label + ": " + (cells - full) + " celda(s) vacía(s)");
+  });
+  (sec.checklists || []).forEach(l => {
+    const arr = S.c[l.id] || [];
+    l.items.forEach((it, i) => { tot++; if (arr[i] && arr[i].ok) ok++; });
+    const pend = l.items.length - arr.filter(x => x && x.ok).length;
+    if (pend) miss.push(l.label + ": " + pend + " ítem(s) sin marcar");
+  });
+  if (S.s[sec.id] !== "Validado") miss.push("Estado de la sección: " + S.s[sec.id]);
+  return { pct: tot ? Math.round(ok * 100 / tot) : 100, miss };
+}
+function globalStats() {
+  let sum = 0, val = 0;
+  SECTIONS.forEach(s => { sum += secStats(s).pct; if (S.s[s.id] === "Validado") val++; });
+  return { pct: Math.round(sum / SECTIONS.length), val };
+}
+
+/* ---------- navegación ---------- */
+function refreshNav() {
+  const g = globalStats();
+  $("#gbar").style.width = g.pct + "%";
+  $("#gtext").textContent = g.pct + "% completo · " + g.val + "/" + SECTIONS.length + " secciones validadas";
+  $("#nav").innerHTML = STEPS.map((sec, i) => {
+    const st = sec === FINAL ? null : secStats(sec);
+    const stat = sec === FINAL ? "" : S.s[sec.id];
+    const cls = stat === "Validado" ? "ok" : stat === "En revisión" ? "rev" : stat === "En progreso" ? "prog" : "";
+    return `<li><button type="button" data-go="${i}" class="${i === S.cur ? "cur" : ""}" ${i === S.cur ? 'aria-current="step"' : ""}>
+      <span class="dot ${cls}" aria-hidden="true"></span><span class="nn">${esc(sec.n)}</span><span class="nt">${esc(sec.title)}</span>${st ? `<span class="np">${st.pct}%</span>` : ""}</button></li>`;
+  }).join("");
+  $("#navsel").innerHTML = STEPS.map((sec, i) => `<option value="${i}" ${i === S.cur ? "selected" : ""}>${esc(sec.n + ". " + sec.title)}</option>`).join("");
+}
+function go(i) { S.cur = Math.max(0, Math.min(STEPS.length - 1, i)); render(); save(); window.scrollTo(0, 0); $("#main h2").focus(); }
+
+/* ---------- render ---------- */
+function fieldHTML(f) {
+  const v = esc(S.v[f.id]); const ph = esc(f.ph || "");
+  const id = "f_" + f.id;
+  let input;
+  if (f.type === "area") input = `<textarea id="${id}" data-f="${f.id}" rows="${Math.max(3, Math.min(10, String(S.v[f.id] || "").split("\n").length + 1))}" placeholder="${ph}">${v}</textarea>`;
+  else if (f.type === "date") input = `<input id="${id}" type="date" data-f="${f.id}" value="${v}">`;
+  else input = `<input id="${id}" type="text" data-f="${f.id}" value="${v}" placeholder="${ph}">`;
+  return `<div class="field"><label for="${id}">${esc(f.label)}</label>${input}</div>`;
+}
+function cellHTML(t, c, r, ri) {
+  const v = r[c.k] == null ? "" : r[c.k];
+  const a = `data-t="${t.id}" data-r="${ri}" data-c="${c.k}" aria-label="${esc(c.label)} fila ${ri + 1}"`;
+  if (c.type === "select") {
+    const opts = c.options.includes(v) || !v ? c.options : [v].concat(c.options);
+    return `<select ${a}><option value=""></option>${opts.map(o => `<option ${o === v ? "selected" : ""}>${esc(o)}</option>`).join("")}</select>`;
+  }
+  if (c.type === "area") return `<textarea ${a} rows="2">${esc(v)}</textarea>`;
+  if (c.type === "date") return `<input type="date" ${a} value="${esc(v)}">`;
+  if (c.type === "number") return `<input type="text" inputmode="decimal" ${a} value="${esc(v)}">`;
+  return `<input type="text" ${a} value="${esc(v)}">`;
+}
+function tableHTML(t) {
+  const rows = S.t[t.id] || [];
+  return `<div class="tblock"><div class="thead"><h3>${esc(t.label)}</h3><span class="muted">${rows.length} fila(s)</span></div>
+  <div class="tscroll"><table class="edit" style="min-width:${Math.max(700, t.cols.length * 150)}px"><colgroup>${t.cols.map(c => `<col style="width:${c.w || 10}%">`).join("")}<col style="width:44px"></colgroup>
+  <thead><tr>${t.cols.map(c => `<th scope="col">${esc(c.label)}</th>`).join("")}<th scope="col"><span class="sr">Acciones</span></th></tr></thead>
+  <tbody>${rows.map((r, ri) => `<tr>${t.cols.map(c => `<td>${cellHTML(t, c, r, ri)}</td>`).join("")}<td><button type="button" class="icon" data-del="${t.id}" data-r="${ri}" title="Eliminar fila" aria-label="Eliminar fila ${ri + 1}">✕</button></td></tr>`).join("")}</tbody></table></div>
+  <button type="button" class="btn ghost small" data-add="${t.id}">+ Agregar fila</button></div>`;
+}
+function checklistHTML(l) {
+  const arr = S.c[l.id] || [];
+  return `<fieldset class="check"><legend>${esc(l.label)}</legend>${l.items.map((it, i) => {
+    const x = arr[i] || { ok: false, nota: "" };
+    return `<div class="ci"><label><input type="checkbox" data-cl="${l.id}" data-i="${i}" ${x.ok ? "checked" : ""}> <span>${esc(it)}</span></label>
+    <input type="text" class="nota" data-cn="${l.id}" data-i="${i}" value="${esc(x.nota)}" placeholder="Nota / evidencia" aria-label="Nota: ${esc(it)}"></div>`;
+  }).join("")}</fieldset>`;
+}
+function render() {
+  const sec = STEPS[S.cur];
+  const main = $("#main");
+  if (sec === FINAL) { main.innerHTML = finalHTML(); refreshNav(); return; }
+  const st = secStats(sec);
+  main.innerHTML = `
+  <header class="sh"><p class="kicker">Paso ${esc(sec.n)} de ${STEPS.length - 1}</p><h2 tabindex="-1">${esc(sec.title)}</h2>
+  <div class="guide"><strong>Cómo completarlo:</strong> ${esc(sec.guide)}<br><span class="muted">Rol responsable sugerido: ${esc(sec.roles)}</span></div>
+  <div class="statusrow"><label for="secstat">Estado de la sección</label>
+  <select id="secstat" data-s="${sec.id}">${STATUS.map(x => `<option ${S.s[sec.id] === x ? "selected" : ""}>${x}</option>`).join("")}</select>
+  <span class="pill" id="secpct">${st.pct}% completo</span></div></header>
+  ${sec.dateTool ? `<div class="tool"><button type="button" class="btn small" id="calcDates">Calcular fechas desde la fecha de inicio</button><span class="muted">${S.v.fechaInicio ? "Inicio: " + esc(S.v.fechaInicio) : "Primero cargá la fecha de inicio en el paso 0."}</span></div>` : ""}
+  ${(sec.fields || []).length ? `<div class="fields">${sec.fields.map(fieldHTML).join("")}</div>` : ""}
+  ${(sec.checklists || []).map(checklistHTML).join("")}
+  ${(sec.tables || []).map(tableHTML).join("")}
+  <div class="field"><label for="obs_${sec.id}">Observaciones de la sección (auditoría / comentarios del equipo)</label>
+  <textarea id="obs_${sec.id}" data-f="obs_${sec.id}" rows="2" placeholder="Hallazgos, dudas, quién revisó y cuándo">${esc(S.v["obs_" + sec.id] || "")}</textarea></div>
+  <nav class="pager" aria-label="Pasos"><button type="button" class="btn ghost" data-go="${S.cur - 1}" ${S.cur === 0 ? "disabled" : ""}>← Anterior</button>
+  <button type="button" class="btn" data-go="${S.cur + 1}">Siguiente →</button></nav>`;
+  refreshNav();
+  requestAnimationFrame(() => main.querySelectorAll("table.edit textarea").forEach(autosize));
+}
+function finalHTML() {
+  const items = SECTIONS.map((s, i) => { const st = secStats(s); return { s, i, st }; });
+  const g = globalStats();
+  return `<header class="sh"><p class="kicker">Paso final</p><h2 tabindex="-1">${esc(FINAL.title)}</h2>
+  <div class="guide">Auditoría de completitud: revisá lo que falta en cada sección y marcá cada una como <strong>Validado</strong> cuando el equipo la apruebe. Después descargá el documento.</div></header>
+  <div class="kpis"><div><b>${g.pct}%</b><span>completitud</span></div><div><b>${g.val}/${SECTIONS.length}</b><span>secciones validadas</span></div>
+  <div><b>${(S.t.rfs || []).length}</b><span>requisitos funcionales</span></div><div><b>${(S.t.back || []).length}</b><span>tareas en backlog</span></div></div>
+  <div class="exportbox"><h3>Descargar</h3><div class="btns">
+  <button type="button" class="btn" data-exp="xlsx">Excel editable (.xlsx)</button>
+  <button type="button" class="btn" data-exp="docx">Word editable (.docx)</button>
+  <button type="button" class="btn" data-exp="pdf">PDF (imprimir / guardar como PDF)</button>
+  <button type="button" class="btn ghost" data-exp="json">Respaldo (.json)</button></div>
+  <p class="muted">Para el PDF, en la ventana de impresión elegí «Guardar como PDF».</p></div>
+  <h3>Pendientes por sección</h3>
+  <div class="audit">${items.map(({ s, i, st }) => `<details ${st.miss.length && S.s[s.id] !== "Validado" ? "" : ""}><summary><span class="dot ${S.s[s.id] === "Validado" ? "ok" : S.s[s.id] === "En revisión" ? "rev" : S.s[s.id] === "En progreso" ? "prog" : ""}" aria-hidden="true"></span>
+  ${esc(s.n + ". " + s.title)} <span class="np">${st.pct}% · ${st.miss.length} pendiente(s)</span></summary>
+  <ul>${st.miss.map(m => `<li>${esc(m)}</li>`).join("") || "<li>Sin pendientes.</li>"}</ul><button type="button" class="btn ghost small" data-go="${i}">Ir a la sección</button></details>`).join("")}</div>`;
+}
+
+/* ---------- eventos ---------- */
+document.addEventListener("input", e => {
+  const el = e.target, d = el.dataset;
+  if (d.f) { S.v[d.f] = el.value; }
+  else if (d.t) { S.t[d.t][+d.r][d.c] = el.value; }
+  else if (d.cn) { S.c[d.cn][+d.i].nota = el.value; }
+  else return;
+  if (el.tagName === "TEXTAREA") autosize(el);
+  save(); updatePct();
+});
+function autosize(el) { el.style.height = "auto"; el.style.height = (el.scrollHeight + 2) + "px"; }
+document.addEventListener("change", e => {
+  const el = e.target, d = el.dataset;
+  if (d.cl) { S.c[d.cl][+d.i].ok = el.checked; save(); updatePct(); }
+  else if (d.s) { S.s[d.s] = el.value; save(); }
+  else if (el.id === "navsel") go(+el.value);
+  else if (el.id === "importFile" && el.files[0]) importJSON(el.files[0]);
+});
+document.addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  const d = b.dataset;
+  if (d.go !== undefined) go(+d.go);
+  else if (d.add) { const t = findTable(d.add); const row = {}; t.cols.forEach(c => row[c.k] = ""); if (d.add === "back") { row.resp = "Por asignar / validar"; row.est = "Propuesto — pendiente de validación"; } S.t[d.add].push(row); save(); render(); }
+  else if (d.del) { if (confirm("¿Eliminar esta fila?")) { S.t[d.del].splice(+d.r, 1); save(); render(); } }
+  else if (d.exp) doExport(d.exp);
+  else if (b.id === "calcDates") calcDates();
+  else if (b.id === "btnReset") { if (confirm("Esto borra todo lo cargado en este navegador y vuelve al borrador inicial. ¿Seguro? (Exportá un respaldo antes.)")) { S = defaults(); try { localStorage.removeItem(KEY); } catch (x) {} render(); setSaved(); } }
+  else if (b.id === "btnImport") $("#importFile").click();
+});
+function updatePct() { const sec = STEPS[S.cur]; if (sec !== FINAL && $("#secpct")) $("#secpct").textContent = secStats(sec).pct + "% completo"; }
+function findTable(id) { for (const s of SECTIONS) for (const t of (s.tables || [])) if (t.id === id) return t; }
+function calcDates() {
+  if (!S.v.fechaInicio) { alert("Primero cargá la fecha de inicio en el paso 0."); return; }
+  const base = new Date(S.v.fechaInicio + "T12:00:00");
+  const iso = d => d.toISOString().slice(0, 10);
+  S.t.back.forEach(r => { const w = parseInt(r.sem, 10); if (isNaN(w)) return; const a = new Date(base); a.setDate(a.getDate() + w * 7); const b = new Date(a); b.setDate(b.getDate() + 6); r.ini = iso(a); r.fin = iso(b); });
+  save(); render();
+}
+function importJSON(file) {
+  const fr = new FileReader();
+  fr.onload = () => { try { const p = JSON.parse(fr.result); const d = defaults(); ["v", "t", "c", "s"].forEach(k => Object.assign(d[k], p[k] || {})); d.cur = 0; S = d; save(); render(); alert("Respaldo importado."); } catch (e) { alert("El archivo no es un respaldo válido."); } };
+  fr.readAsText(file);
+}
+
+/* ---------- modelo de documento (para Word / PDF) ---------- */
+function docModel() {
+  const B = [];
+  B.push({ k: "title", t: (S.v.proyecto || "Proyecto") + " — Documento del MVP" });
+  B.push({ k: "sub", t: (S.v.version || "") + " · Generado el " + new Date().toLocaleDateString("es-AR") });
+  SECTIONS.forEach(sec => {
+    B.push({ k: "h1", t: sec.n + ". " + sec.title });
+    B.push({ k: "meta", t: "Estado: " + S.s[sec.id] + " · Completitud: " + secStats(sec).pct + "% · Responsable sugerido: " + sec.roles });
+    (sec.fields || []).forEach(f => B.push({ k: "field", l: f.label, t: S.v[f.id] || "" }));
+    (sec.checklists || []).forEach(l => B.push({ k: "table", t: l.label, cols: ["✓", "Ítem", "Nota / evidencia"], w: [6, 54, 40], rows: l.items.map((it, i) => { const x = (S.c[l.id] || [])[i] || {}; return [x.ok ? "Sí" : "No", it, x.nota || ""]; }) }));
+    (sec.tables || []).forEach(t => B.push({ k: "table", t: t.label, cols: t.cols.map(c => c.label), w: t.cols.map(c => c.w || 10), rows: (S.t[t.id] || []).map(r => t.cols.map(c => r[c.k] || "")) }));
+    if (filled(S.v["obs_" + sec.id])) B.push({ k: "field", l: "Observaciones", t: S.v["obs_" + sec.id] });
+  });
+  return B;
+}
+
+/* ---------- ZIP (sin compresión) ---------- */
+const CRC = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function crc32(u) { let c = 0xFFFFFFFF; for (let i = 0; i < u.length; i++) c = CRC[(c ^ u[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+function makeZip(files, mime) {
+  const enc = new TextEncoder(); const parts = [], central = []; let off = 0;
+  files.forEach(f => {
+    const nm = enc.encode(f.name), data = enc.encode(f.data), crc = crc32(data);
+    const lh = new DataView(new ArrayBuffer(30));
+    lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true); lh.setUint16(8, 0, true);
+    lh.setUint16(10, 0, true); lh.setUint16(12, 0x21, true); lh.setUint32(14, crc, true); lh.setUint32(18, data.length, true);
+    lh.setUint32(22, data.length, true); lh.setUint16(26, nm.length, true); lh.setUint16(28, 0, true);
+    parts.push(new Uint8Array(lh.buffer), nm, data);
+    const ch = new DataView(new ArrayBuffer(46));
+    ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true); ch.setUint16(8, 0x0800, true);
+    ch.setUint16(10, 0, true); ch.setUint16(12, 0, true); ch.setUint16(14, 0x21, true); ch.setUint32(16, crc, true);
+    ch.setUint32(20, data.length, true); ch.setUint32(24, data.length, true); ch.setUint16(28, nm.length, true);
+    ch.setUint32(42, off, true);
+    central.push(new Uint8Array(ch.buffer), nm);
+    off += 30 + nm.length + data.length;
+  });
+  const cd = central.reduce((a, b) => a + b.length, 0);
+  const end = new DataView(new ArrayBuffer(22));
+  end.setUint32(0, 0x06054b50, true); end.setUint16(8, files.length, true); end.setUint16(10, files.length, true);
+  end.setUint32(12, cd, true); end.setUint32(16, off, true);
+  return new Blob(parts.concat(central, [new Uint8Array(end.buffer)]), { type: mime });
+}
+const x = s => String(s == null ? "" : s).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+/* ---------- XLSX ---------- */
+function colL(n) { let s = ""; n++; while (n) { const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26); } return s; }
+function sheetXML(rows, widths, hdrRow) {
+  const cols = widths.map((w, i) => `<col min="${i + 1}" max="${i + 1}" width="${w}" customWidth="1"/>`).join("");
+  const body = rows.map((r, ri) => `<row r="${ri + 1}">${r.map((v, ci) => {
+    const st = ri === hdrRow ? 1 : ri < hdrRow ? 3 : 2;
+    return `<c r="${colL(ci)}${ri + 1}" t="inlineStr" s="${st}"><is><t xml:space="preserve">${x(v)}</t></is></c>`;
+  }).join("")}</row>`).join("");
+  const pane = hdrRow >= 0 ? `<sheetViews><sheetView workbookViewId="0"><pane ySplit="${hdrRow + 1}" topLeftCell="A${hdrRow + 2}" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>` : "";
+  const af = hdrRow >= 0 && rows.length > hdrRow + 1 ? `<autoFilter ref="A${hdrRow + 1}:${colL(widths.length - 1)}${rows.length}"/>` : "";
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">${pane}<cols>${cols}</cols><sheetData>${body}</sheetData>${af}</worksheet>`;
+}
+function exportXLSX() {
+  const sheets = []; const used = {};
+  const name = n => { let b = n.replace(/[\[\]:*?\/\\]/g, " ").slice(0, 28).trim(), k = b, i = 2; while (used[k.toLowerCase()]) k = b.slice(0, 25) + " " + i++; used[k.toLowerCase()] = 1; return k; };
+  const ficha = [[(S.v.proyecto || "Proyecto") + " — Ficha del MVP"], [(S.v.version || "") + " · " + new Date().toLocaleDateString("es-AR")], ["Sección", "Campo", "Valor", "Estado sección"]];
+  SECTIONS.forEach(sec => {
+    (sec.fields || []).forEach(f => ficha.push([sec.n + ". " + sec.title, f.label, S.v[f.id] || "", S.s[sec.id]]));
+    if (filled(S.v["obs_" + sec.id])) ficha.push([sec.n + ". " + sec.title, "Observaciones", S.v["obs_" + sec.id], S.s[sec.id]]);
+  });
+  sheets.push({ n: name("Ficha"), xml: sheetXML(ficha, [26, 34, 90, 16], 2) });
+  const est = [["Estado y completitud por sección"], ["N°", "Sección", "Estado", "Completitud %", "Pendientes"]];
+  SECTIONS.forEach(s => { const st = secStats(s); est.push([s.n, s.title, S.s[s.id], String(st.pct), st.miss.join(" | ")]); });
+  sheets.push({ n: name("Estado"), xml: sheetXML(est, [6, 40, 16, 14, 90], 1) });
+  const chk = [["Checklists"], ["Sección", "Lista", "Ítem", "Cumplido", "Nota / evidencia"]];
+  SECTIONS.forEach(sec => (sec.checklists || []).forEach(l => l.items.forEach((it, i) => { const c = (S.c[l.id] || [])[i] || {}; chk.push([sec.n + ". " + sec.title, l.label, it, c.ok ? "Sí" : "No", c.nota || ""]); })));
+  sheets.push({ n: name("Checklists"), xml: sheetXML(chk, [28, 30, 60, 10, 40], 1) });
+  SECTIONS.forEach(sec => (sec.tables || []).forEach(t => {
+    const rows = [[sec.n + ". " + sec.title + " — " + t.label], t.cols.map(c => c.label)];
+    (S.t[t.id] || []).forEach(r => rows.push(t.cols.map(c => r[c.k] || "")));
+    sheets.push({ n: name(t.label), xml: sheetXML(rows, t.cols.map(c => Math.max(8, Math.round((c.w || 10) * 1.6))), 1) });
+  }));
+  const styles = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+<fonts count="3"><font><sz val="10"/><name val="Calibri"/></font><font><b/><sz val="10"/><color rgb="FFFFFFFF"/><name val="Calibri"/></font><font><b/><sz val="13"/><color rgb="FF0E2A3F"/><name val="Calibri"/></font></fonts>
+<fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF0E2A3F"/><bgColor indexed="64"/></patternFill></fill></fills>
+<borders count="2"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FFCCCCCC"/></left><right style="thin"><color rgb="FFCCCCCC"/></right><top style="thin"><color rgb="FFCCCCCC"/></top><bottom style="thin"><color rgb="FFCCCCCC"/></bottom><diagonal/></border></borders>
+<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>
+<cellXfs count="4"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment vertical="center" wrapText="1"/></xf><xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyAlignment="1"><alignment vertical="top" wrapText="1"/></xf><xf numFmtId="0" fontId="2" fillId="0" borderId="0" xfId="0" applyFont="1"/></cellXfs>
+<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>`;
+  const files = [
+    { name: "[Content_Types].xml", data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>${sheets.map((s, i) => `<Override PartName="/xl/worksheets/sheet${i + 1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join("")}</Types>` },
+    { name: "_rels/.rels", data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>` },
+    { name: "xl/workbook.xml", data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>${sheets.map((s, i) => `<sheet name="${x(s.n)}" sheetId="${i + 1}" r:id="rId${i + 1}"/>`).join("")}</sheets>${sheets.some(s => s.xml.includes("<autoFilter")) ? `<definedNames>${sheets.map((s, i) => { const m = s.xml.match(/<autoFilter ref="([^"]+)"/); if (!m) return ""; const [a, b] = m[1].split(":"); const abs = c => c.replace(/([A-Z]+)(\d+)/, "$$$1$$$2"); return `<definedName name="_xlnm._FilterDatabase" localSheetId="${i}" hidden="1">'${x(s.n.replace(/'/g, "''"))}'!${abs(a)}:${abs(b)}</definedName>`; }).join("")}</definedNames>` : ""}</workbook>` },
+    { name: "xl/_rels/workbook.xml.rels", data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${sheets.map((s, i) => `<Relationship Id="rId${i + 1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i + 1}.xml"/>`).join("")}<Relationship Id="rId${sheets.length + 1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>` },
+    { name: "xl/styles.xml", data: styles },
+  ].concat(sheets.map((s, i) => ({ name: `xl/worksheets/sheet${i + 1}.xml`, data: s.xml })));
+  download(makeZip(files, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"), fname("xlsx"));
+}
+
+/* ---------- DOCX ---------- */
+function runs(t, opt = "") { return String(t == null ? "" : t).split("\n").map((ln, i) => (i ? "<w:r><w:br/></w:r>" : "") + `<w:r>${opt ? `<w:rPr>${opt}</w:rPr>` : ""}<w:t xml:space="preserve">${x(ln)}</w:t></w:r>`).join(""); }
+function para(t, style, opt) { return `<w:p>${style ? `<w:pPr><w:pStyle w:val="${style}"/></w:pPr>` : ""}${runs(t, opt)}</w:p>`; }
+function exportDOCX() {
+  const TW = 15398; // ancho útil horizontal A4 (twips)
+  const body = docModel().map(b => {
+    if (b.k === "title") return para(b.t, "Title");
+    if (b.k === "sub") return para(b.t, "Subtitle");
+    if (b.k === "h1") return para(b.t, "Heading1");
+    if (b.k === "meta") return para(b.t, null, '<w:i/><w:color w:val="555555"/><w:sz w:val="18"/>');
+    if (b.k === "field") return `<w:p><w:pPr><w:spacing w:after="40"/></w:pPr>${runs(b.l, "<w:b/>")}</w:p>` + para(b.t || "—");
+    if (b.k === "table") {
+      const tot = b.w.reduce((a, c) => a + c, 0); const ws = b.w.map(w => Math.round(w / tot * TW));
+      const cell = (t, i, hdr) => `<w:tc><w:tcPr><w:tcW w:w="${ws[i]}" w:type="dxa"/>${hdr ? '<w:shd w:val="clear" w:color="auto" w:fill="0E2A3F"/>' : ""}</w:tcPr><w:p><w:pPr><w:spacing w:after="0"/></w:pPr>${runs(t, hdr ? '<w:b/><w:color w:val="FFFFFF"/><w:sz w:val="16"/>' : '<w:sz w:val="16"/>')}</w:p></w:tc>`;
+      return para(b.t, "Heading2") + `<w:tbl><w:tblPr><w:tblW w:w="${TW}" w:type="dxa"/><w:tblLayout w:type="fixed"/><w:tblBorders>${["top", "left", "bottom", "right", "insideH", "insideV"].map(s => `<w:${s} w:val="single" w:sz="4" w:space="0" w:color="BBBBBB"/>`).join("")}</w:tblBorders><w:tblCellMar><w:left w:w="70" w:type="dxa"/><w:right w:w="70" w:type="dxa"/></w:tblCellMar></w:tblPr>
+<w:tblGrid>${ws.map(w => `<w:gridCol w:w="${w}"/>`).join("")}</w:tblGrid>
+<w:tr><w:trPr><w:tblHeader/></w:trPr>${b.cols.map((c, i) => cell(c, i, true)).join("")}</w:tr>${b.rows.length ? b.rows.map(r => `<w:tr><w:trPr><w:cantSplit/></w:trPr>${r.map((c, i) => cell(c, i, false)).join("")}</w:tr>`).join("") : `<w:tr>${b.cols.map((c, i) => cell(i ? "" : "Sin filas", i, false)).join("")}</w:tr>`}</w:tbl>` + para("");
+    }
+    return "";
+  }).join("");
+  const doc = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>${body}<w:sectPr><w:pgSz w:w="16838" w:h="11906" w:orient="landscape"/><w:pgMar w:top="720" w:right="720" w:bottom="720" w:left="720" w:header="360" w:footer="360" w:gutter="0"/></w:sectPr></w:body></w:document>`;
+  const styles = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+<w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri" w:eastAsia="Calibri"/><w:sz w:val="21"/><w:lang w:val="es-AR"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="120" w:line="264" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults>
+<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/></w:style>
+<w:style w:type="paragraph" w:styleId="Title"><w:name w:val="Title"/><w:basedOn w:val="Normal"/><w:pPr><w:spacing w:after="60"/></w:pPr><w:rPr><w:b/><w:color w:val="0E2A3F"/><w:sz w:val="40"/></w:rPr></w:style>
+<w:style w:type="paragraph" w:styleId="Subtitle"><w:name w:val="Subtitle"/><w:basedOn w:val="Normal"/><w:rPr><w:color w:val="555555"/><w:sz w:val="20"/></w:rPr></w:style>
+<w:style w:type="paragraph" w:styleId="Heading1"><w:name w:val="heading 1"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:pPr><w:keepNext/><w:shd w:val="clear" w:color="auto" w:fill="F5C518"/><w:spacing w:before="360" w:after="120"/><w:outlineLvl w:val="0"/></w:pPr><w:rPr><w:b/><w:color w:val="1A1A1A"/><w:sz w:val="28"/></w:rPr></w:style>
+<w:style w:type="paragraph" w:styleId="Heading2"><w:name w:val="heading 2"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:pPr><w:keepNext/><w:spacing w:before="200" w:after="80"/><w:outlineLvl w:val="1"/></w:pPr><w:rPr><w:b/><w:color w:val="0E2A3F"/><w:sz w:val="23"/></w:rPr></w:style>
+</w:styles>`;
+  const files = [
+    { name: "[Content_Types].xml", data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/></Types>` },
+    { name: "_rels/.rels", data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>` },
+    { name: "word/_rels/document.xml.rels", data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>` },
+    { name: "word/document.xml", data: doc },
+    { name: "word/styles.xml", data: styles },
+  ];
+  download(makeZip(files, "application/vnd.openxmlformats-officedocument.wordprocessingml.document"), fname("docx"));
+}
+
+/* ---------- PDF (impresión) ---------- */
+function exportPDF() {
+  $("#report").innerHTML = docModel().map(b => {
+    if (b.k === "title") return `<h1>${esc(b.t)}</h1>`;
+    if (b.k === "sub") return `<p class="rsub">${esc(b.t)}</p>`;
+    if (b.k === "h1") return `<h2>${esc(b.t)}</h2>`;
+    if (b.k === "meta") return `<p class="rmeta">${esc(b.t)}</p>`;
+    if (b.k === "field") return `<div class="rf"><b>${esc(b.l)}</b><div>${esc(b.t || "—").replace(/\n/g, "<br>")}</div></div>`;
+    if (b.k === "table") return `<h3>${esc(b.t)}</h3><table><colgroup>${b.w.map(w => `<col style="width:${w}%">`).join("")}</colgroup><thead><tr>${b.cols.map(c => `<th>${esc(c)}</th>`).join("")}</tr></thead><tbody>${b.rows.map(r => `<tr>${r.map(c => `<td>${esc(c).replace(/\n/g, "<br>")}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+    return "";
+  }).join("");
+  setTimeout(() => window.print(), 50);
+}
+
+function fname(ext) { return (S.v.proyecto || "Proyecto").replace(/[^\wÁÉÍÓÚáéíóúÑñ]+/g, "_").replace(/^_|_$/g, "") + "_MVP_" + new Date().toISOString().slice(0, 10) + "." + ext; }
+let DL = null;
+if (window.claude && typeof window.claude.use === "function") window.claude.use("downloads").then(d => { DL = d; }).catch(() => {});
+function download(blob, name) {
+  if (DL) { DL.save({ filename: name, data: blob }).catch(e => { if (e && e.code !== "declined") anchorDownload(blob, name); }); return; }
+  anchorDownload(blob, name);
+}
+function anchorDownload(blob, name) { const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000); }
+function doExport(k) {
+  if (k === "xlsx") exportXLSX();
+  else if (k === "docx") exportDOCX();
+  else if (k === "pdf") exportPDF();
+  else if (k === "json") download(new Blob([JSON.stringify(S, null, 1)], { type: "application/json" }), fname("json"));
+}
+window.NIRA = { exportXLSX, exportDOCX, docModel, state: () => S };
+
+render(); setSaved();
+})();
+
+</script>
+</body>
+</html>
