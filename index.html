@@ -136,19 +136,10 @@ const SECTIONS = [
     { id: "stakeholders", label: "Stakeholders / cliente", type: "area", ph: "Organización, contacto, qué espera del MVP" },
     { id: "enlaces", label: "Enlaces de trabajo", type: "area", ph: "Repositorio GitHub:\nFigma:\nJira / Trello:\nDrive / documentación:\nDeploy (front / back):" },
   ],
-  tables: [
-    { id: "fuentes", label: "Fuentes utilizadas", cols: [
-      { k: "fuente", label: "Fuente", w: 30 }, { k: "uso", label: "Para qué se usó", type: "area", w: 50 }, { k: "estado", label: "Estado", type: "select", options: EST_SIMPLE, w: 20 } ],
-      rows: [
-        { fuente: "Video «NIRA: Talento y Futuro» (5:48 min)", uso: "Visión, 6 pilares, recorrido del usuario, privacidad, habilidades, competencias e insignias. Base de la trazabilidad (paso 1).", estado: "En revisión" },
-        { fuente: "Documento «Calculadora Inteligente» (Innova Lab)", uso: "Estructura del documento de producto: identificación, problemática, solución, funcionalidades, requisitos mínimos, future scope, tecnologías y plan semanal por rol.", estado: "Validado" },
-        { fuente: "Backlog y cronograma UrbanFix (Talently Lab)", uso: "Formato de backlog por semana y rol, cronograma con hitos y checkpoints, notas de validación.", estado: "Validado" },
-        { fuente: "Plantilla de Proyecto (HTML)", uso: "Campos base y paleta de colores del documento.", estado: "Validado" },
-      ] } ],
 },
 /* 1 ------------------------------------------------------------ */
-{ id: "vision", n: "1", title: "Visión y trazabilidad con el video",
-  guide: "Cada elemento del video tiene que terminar en al menos un módulo y un requisito del MVP. Si algo queda en «No», el MVP no cumple lo que muestra el video o hay que justificar por qué queda fuera.",
+{ id: "vision", n: "1", title: "Visión y trazabilidad",
+  guide: "Cada elemento de la visión tiene que terminar en al menos un módulo y un requisito del MVP. Si algo queda en «No», el MVP no cumple la visión o hay que justificar por qué queda fuera.",
   roles: "PM / BA · UX/UI",
   fields: [
     { id: "pregunta", label: "Pregunta disparadora", def: "¿Y si el futuro no tuviera que esperar en una fila?" },
@@ -157,8 +148,8 @@ const SECTIONS = [
     { id: "pitch", label: "Pitch en una frase (para la demo)", type: "area", ph: "Ej.: NIRA reemplaza las filas y los CV impresos por una identidad digital con QR, capacitación y evaluación gamificada que termina en insignias verificables y oportunidades reales de empleo." },
   ],
   tables: [
-    { id: "traza", label: "Trazabilidad video → MVP", cols: [
-      { k: "elem", label: "Elemento del video", w: 22 }, { k: "mensaje", label: "Qué dice / muestra", type: "area", w: 30 },
+    { id: "traza", label: "Trazabilidad visión → MVP", cols: [
+      { k: "elem", label: "Elemento de la visión", w: 22 }, { k: "mensaje", label: "Qué plantea", type: "area", w: 30 },
       { k: "modulo", label: "Módulo del MVP", w: 18 }, { k: "rf", label: "RF asociados", w: 12 }, { k: "cub", label: "¿Cubierto?", type: "select", options: SINO, w: 10 } ],
       rows: [
         { elem: "1. El fin de las filas", mensaje: "Tiempo y talento perdido: pilas de CV impresos y filas interminables («seiscientas personas para un solo puesto»). Entrada ágil con QR y un currículum vivo y digital.", modulo: "Eventos y acceso QR", rf: "RF-07 a RF-10", cub: "Sí" },
@@ -178,7 +169,7 @@ const SECTIONS = [
 },
 /* 2 ------------------------------------------------------------ */
 { id: "identificacion", n: "2", title: "Identificación del producto",
-  guide: "Misma estructura que el documento de producto de referencia. Escribí en lenguaje simple: lo va a leer el cliente.",
+  guide: "Escribí en lenguaje simple: lo va a leer el cliente.",
   roles: "PM / BA",
   fields: [
     { id: "nombreProd", label: "Nombre del producto", def: "NIRA: Talento y Futuro" },
@@ -305,7 +296,7 @@ const SECTIONS = [
         { cat: "Acceso con QR", req: "Inscripción a un evento, QR único y check-in desde el navegador.", ok: "A definir" },
         { cat: "Descubrir", req: "Test de intereses con resultado y ruta sugerida.", ok: "A definir" },
         { cat: "Aprender", req: "Al menos 2 rutas de capacitación con progreso.", ok: "A definir" },
-        { cat: "Evaluación gamificada", req: "Al menos 5 misiones (una por competencia del video) con evidencia y revisión.", ok: "A definir" },
+        { cat: "Evaluación gamificada", req: "Al menos 5 misiones (una por competencia) con evidencia y revisión.", ok: "A definir" },
         { cat: "Certificación", req: "Emisión de insignias y verificación pública por enlace/QR.", ok: "A definir" },
         { cat: "Acceso al empleo", req: "Empresa publica oferta; persona autoriza compartir CV y se postula.", ok: "A definir" },
         { cat: "Roles y permisos", req: "Talento, empresa, organizador y admin con acceso solo a lo suyo.", ok: "A definir" },
@@ -368,7 +359,7 @@ const SECTIONS = [
 },
 /* 11 ------------------------------------------------------------ */
 { id: "gamificacion", n: "11", title: "Evaluación gamificada y certificación",
-  guide: "Tabla del video: cada competencia tiene una evidencia de aprendizaje y termina en una insignia. Completá criterio, puntos y nivel.",
+  guide: "Cada competencia tiene una evidencia de aprendizaje y termina en una insignia. Completá criterio, puntos y nivel.",
   roles: "UX/UI · PM / BA · Backend",
   fields: [
     { id: "estandar", label: "Estándar de insignias", def: "Open Badges 3.0 (1EdTech), compatible con credenciales verificables. Validar si el MVP usa el estándar completo o una versión simplificada." },
@@ -389,14 +380,14 @@ const SECTIONS = [
 },
 /* 12 ------------------------------------------------------------ */
 { id: "seguridad", n: "12", title: "Identidad, privacidad y seguridad (GRC)",
-  guide: "Lo que exige el video sobre identidad y privacidad, más controles de seguridad mínimos. Base legal de referencia en Argentina: Ley 25.326 de Protección de Datos Personales. Validar con asesoría legal.",
+  guide: "Principios de identidad y privacidad de NIRA, más controles de seguridad mínimos. Base legal de referencia en Argentina: Ley 25.326 de Protección de Datos Personales. Validar con asesoría legal.",
   roles: "Legal / GRC · Backend · QA",
   fields: [
     { id: "politica", label: "Política de privacidad y términos", type: "area", ph: "Quién la redacta, dónde se publica, versión vigente, cómo se notifican los cambios." },
     { id: "retencion", label: "Política de retención y eliminación", type: "area", ph: "Cuánto tiempo se guardan perfil, evidencias, check-ins y registros de auditoría; qué pasa al eliminar la cuenta." },
   ],
   checklists: [
-    { id: "privVideo", label: "Identidad y privacidad (del video)", items: [
+    { id: "privacidad", label: "Identidad y privacidad", items: [
       "Consentimiento informado para todos los datos.",
       "Acceso controlado a la información personal.",
       "Capacidad de actualizar y corregir tus datos.",
@@ -431,7 +422,7 @@ const SECTIONS = [
 },
 /* 13 ------------------------------------------------------------ */
 { id: "arquitectura", n: "13", title: "Arquitectura y tecnologías",
-  guide: "Stack sugerido alineado con los proyectos de referencia. Documentá la decisión final, el modelo de datos y el contrato de API.",
+  guide: "Stack sugerido. Documentá la decisión final, el modelo de datos y el contrato de API.",
   roles: "Frontend · Backend",
   fields: [
     { id: "decisionArq", label: "Decisión de arquitectura", type: "area", def: "Front SPA (React + Vite) que consume una API REST (Node.js + Express) con base PostgreSQL vía Prisma. Autenticación con JWT. Archivos de evidencias en almacenamiento de objetos. Front desplegado en Vercel y back en Render o Railway." },
@@ -478,10 +469,10 @@ const SECTIONS = [
 },
 /* 14 ------------------------------------------------------------ */
 { id: "uxui", n: "14", title: "UX/UI y accesibilidad",
-  guide: "Inventario de pantallas con sus estados, sistema de diseño y checklist de accesibilidad. El estilo visual del video (amarillo, azul, ilustración a mano) es una buena base.",
+  guide: "Inventario de pantallas con sus estados, sistema de diseño y checklist de accesibilidad. Base visual: amarillo, azul e ilustración de trazo a mano.",
   roles: "UX/UI · Diseño gráfico · Frontend",
   fields: [
-    { id: "ds", label: "Sistema de diseño (colores, tipografía, componentes)", type: "area", def: "Colores base tomados del video: amarillo #F5C518 (acento), azul #0E2A3F (texto y encabezados), celeste de resaltado y fondo claro con cuadrícula. Ilustraciones de trazo a mano. Validar contraste del amarillo sobre blanco (no usarlo para texto)." },
+    { id: "ds", label: "Sistema de diseño (colores, tipografía, componentes)", type: "area", def: "Colores base: amarillo #F5C518 (acento), azul #0E2A3F (texto y encabezados), celeste de resaltado y fondo claro con cuadrícula. Ilustraciones de trazo a mano. Validar contraste del amarillo sobre blanco (no usarlo para texto)." },
     { id: "tono", label: "Tono de voz y microcopy", type: "area", def: "Cercano, motivador y claro. Frases cortas, voseo, sin tecnicismos. Ej.: «Tu QR está listo», «Ganaste la insignia Trabajo en equipo»." },
     { id: "figma", label: "Enlace a Figma / prototipo", ph: "https://www.figma.com/…" },
   ],
@@ -565,7 +556,7 @@ const SECTIONS = [
 },
 /* 17 ------------------------------------------------------------ */
 { id: "sprints", n: "17", title: "Plan de trabajo semanal por rol",
-  guide: "Mismo formato que el plan de referencia: objetivo de la semana, tareas por rol, entregable y dependencias.",
+  guide: "Objetivo de la semana, tareas por rol, entregable y dependencias.",
   roles: "PM / BA · Todos",
   tables: [
     { id: "plan", label: "Plan por semana", cols: [
@@ -584,7 +575,7 @@ const SECTIONS = [
 },
 /* 18 ------------------------------------------------------------ */
 { id: "backlog", n: "18", title: "Backlog inicial",
-  guide: "Formato del backlog de referencia. Las fechas se calculan desde la fecha de inicio (paso 0) con el botón «Calcular fechas». Los responsables quedan «Por asignar / validar» hasta confirmar disponibilidad.",
+  guide: "Las fechas se calculan desde la fecha de inicio (paso 0) con el botón «Calcular fechas». Los responsables quedan «Por asignar / validar» hasta confirmar disponibilidad.",
   roles: "PM / BA",
   dateTool: true,
   tables: [

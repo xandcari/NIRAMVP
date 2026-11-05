@@ -9,7 +9,7 @@ Guía interactiva para completar, paso a paso, la especificación del MVP de **N
 
 ## Qué incluye
 
-22 pasos más un cierre de auditoría: datos del proyecto, trazabilidad con el video, identificación del producto, problemática, solución, perfiles y recorrido del usuario, módulos, requisitos funcionales y no funcionales, requisitos mínimos del MVP, reglas de negocio y glosario, evaluación gamificada e insignias, identidad, privacidad y seguridad, arquitectura y API, UX/UI y accesibilidad, QA, KPIs, plan semanal por rol, backlog, riesgos, future scope y decisiones pendientes.
+22 pasos más un cierre de auditoría: datos del proyecto, trazabilidad visión → MVP, identificación del producto, problemática, solución, perfiles y recorrido del usuario, módulos, requisitos funcionales y no funcionales, requisitos mínimos del MVP, reglas de negocio y glosario, evaluación gamificada e insignias, identidad, privacidad y seguridad, arquitectura y API, UX/UI y accesibilidad, QA, KPIs, plan semanal por rol, backlog, riesgos, future scope y decisiones pendientes.
 
 ## Funciones
 
