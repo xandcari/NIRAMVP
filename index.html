@@ -1058,13 +1058,7 @@ function exportPDF() {
 }
 
 function fname(ext) { return (S.v.proyecto || "Proyecto").replace(/[^\wÁÉÍÓÚáéíóúÑñ]+/g, "_").replace(/^_|_$/g, "") + "_MVP_" + new Date().toISOString().slice(0, 10) + "." + ext; }
-let DL = null;
-if (window.claude && typeof window.claude.use === "function") window.claude.use("downloads").then(d => { DL = d; }).catch(() => {});
-function download(blob, name) {
-  if (DL) { DL.save({ filename: name, data: blob }).catch(e => { if (e && e.code !== "declined") anchorDownload(blob, name); }); return; }
-  anchorDownload(blob, name);
-}
-function anchorDownload(blob, name) { const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000); }
+function download(blob, name) { const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000); }
 function doExport(k) {
   if (k === "xlsx") exportXLSX();
   else if (k === "docx") exportDOCX();
